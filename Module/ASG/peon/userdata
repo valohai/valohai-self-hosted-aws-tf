@@ -1,0 +1,4 @@
+#!/bin/bash
+set -xeuo pipefail
+env "QUEUES=${queue_name}" CLOUD=ec2 INSTALLATION_TYPE=private-worker REDIS_URL=${redis_url} 'PEON_EXTRA_CONFIG={"ALLOW_MOUNTS":"true"}' /home/ubuntu/bup.pex --only=configure_peon
+systemctl restart peon
