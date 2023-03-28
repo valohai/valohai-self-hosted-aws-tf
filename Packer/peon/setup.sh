@@ -3,7 +3,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Install necessary dependencies
 sudo apt-get update -y
-sudo apt-get install -y -qq ca-certificates curl gnupg lsb-release python3-pip unzip
+sudo apt-get install -y -qq python3 python3-distutils
 
 # Setup AWS CLI
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -16,8 +16,12 @@ sudo cp /tmp/credentials /home/ubuntu/.aws/credentials
 export AWS_PROFILE=default
 
 # Setup roi config files
-sudo cp /tmp/roi.config /etc/roi.config
-sudo cp /tmp/roi.service /etc/systemd/system/roi.service
+sudo cp /tmp/peon.config /etc/peon.config
+sudo cp /tmp/peon.service /etc/systemd/system/peon.service
+sudo cp /tmp/peon-clean.service /etc/systemd/system/peon-clean.service
+sudo cp /tmp/peon-clean.timer /etc/systemd/system/peon-clean.timer
+sudo cp /tmp/docker-prune.service /etc/systemd/system/docker-prune.service
+sudo cp /tmp/docker-prune.timer /etc/systemd/system/docker-prune.timer
 
 # Setup docker
 sudo mkdir -p /etc/apt/keyrings
@@ -30,10 +34,13 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 
 sudo systemctl start docker
 
-# Download latest Valohai Roi image
-aws ecr get-login-password --region eu-west-1 | sudo docker login --username AWS --password-stdin 905675611115.dkr.ecr.eu-west-1.amazonaws.com
-sudo docker pull 905675611115.dkr.ecr.eu-west-1.amazonaws.com/valohai/roi:latest
-sudo docker tag 905675611115.dkr.ecr.eu-west-1.amazonaws.com/valohai/roi:latest valohai/roi:latest
+# Download and setup Peon and it's dependencies
+wget -O /home/ubuntu/bup.pex "https://dist.valohai.com/peon-bringup/release/bup.pex"
+chmod u+x /home/ubuntu/bup.pex
+sudo /home/ubuntu/bup.pex
 
 sudo systemctl daemon-reload
-sudo systemctl enable roi
+sudo systemctl enable peon-clean.timer
+sudo systemctl start peon-clean.timer
+sudo systemctl enable docker-prune.timer
+sudo systemctl start docker-prune.timer

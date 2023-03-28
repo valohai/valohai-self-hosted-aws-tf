@@ -18,12 +18,12 @@ packer {
   }
 }
 
-source "amazon-ebs" "valohai_roi" {
+source "amazon-ebs" "valohai_peon" {
   profile = var.aws_profile
   region  = var.region
 
-  ami_name             = "valohai-roi-${local.timestamp}"
-  instance_type        = "m5.xlarge"
+  ami_name             = "valohai-peon-${local.timestamp}"
+  instance_type        = "p2.xlarge"
   iam_instance_profile = "MasterInstanceProfile"
   ssh_username         = "ubuntu"
 
@@ -41,18 +41,40 @@ source "amazon-ebs" "valohai_roi" {
 }
 
 build {
-  sources = ["source.amazon-ebs.valohai_roi"]
+  sources = ["source.amazon-ebs.valohai_peon"]
 
-  # Copy default roi.config
+  # Copy default peon.config
   provisioner "file" {
-    source      = "config/roi.config"
-    destination = "/tmp/roi.config"
+    source      = "config/peon.config"
+    destination = "/tmp/peon.config"
   }
 
-  # Copy default roi.service file
+  # Copy default peon.service files
   provisioner "file" {
-    source      = "config/roi.service"
-    destination = "/tmp/roi.service"
+    source      = "config/peon.service"
+    destination = "/tmp/peon.service"
+  }
+
+  provisioner "file" {
+    source      = "config/peon-clean.service"
+    destination = "/tmp/peon-clean.service"
+  }
+
+  provisioner "file" {
+    source      = "config/peon-clean.timer"
+    destination = "/tmp/peon-clean.timer"
+  }
+
+  # Copy default docker prune service files
+  
+  provisioner "file" {
+    source      = "config/docker-prune.service"
+    destination = "/tmp/docker-prune.service"
+  }
+  
+  provisioner "file" {
+    source      = "config/docker-prune.timer"
+    destination = "/tmp/docker-prune.timer"
   }
 
   # Copy default AWS credentials file

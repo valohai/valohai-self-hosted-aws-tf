@@ -1,0 +1,14 @@
+[Unit]
+Description=Valohai Peon Cleanup
+After=network.target
+
+[Service]
+Type=oneshot
+Environment=LC_ALL=C.UTF-8 LANG=C.UTF-8
+EnvironmentFile=-/etc/peon.config
+ExecStart=/usr/local/bin/valohai-peon clean
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
