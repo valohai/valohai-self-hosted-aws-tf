@@ -25,6 +25,7 @@ source "amazon-ebs" "valohai_roi" {
   ami_name             = "valohai-roi-${local.timestamp}"
   instance_type        = "m5.xlarge"
   iam_instance_profile = "MasterInstanceProfile"
+  ssh_username         = "ubuntu"
 
   source_ami_filter {
     filters = {
@@ -33,9 +34,10 @@ source "amazon-ebs" "valohai_roi" {
       virtualization-type = "hvm"
     }
     most_recent = true
-    owners      = ["099720109477", "450886142693"] # Which AWS Account can access this image
+    owners      = ["099720109477"] # Canonical
   }
-  ssh_username = "ubuntu"
+
+  ami_users = ["450886142693"] # Which AWS Account can access this image
 }
 
 build {
