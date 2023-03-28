@@ -14,7 +14,7 @@ data "aws_caller_identity" "current" {}
 
 resource "aws_s3_bucket" "valohai_data" {
   bucket        = "valohai-data-${data.aws_caller_identity.current.account_id}"
-  force_destroy = true
+  force_destroy = false
 }
 
 resource "aws_s3_bucket_public_access_block" "valohai_datablock_access" {
