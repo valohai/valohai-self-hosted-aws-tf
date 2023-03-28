@@ -111,12 +111,12 @@ resource "aws_eip" "valohai_ip_roi" {
 
 # Valohai roi instance
 resource "aws_instance" "valohai_roi" {
-  ami                  = data.aws_ami.valohai.id
-  instance_type        = "m5.xlarge"
-  key_name             = aws_key_pair.valohai_roi_key.id
-  security_groups      = [var.security_group_id]
-  subnet_id            = var.subnet_id
-  iam_instance_profile = "ValohaiMasterInstanceProfile"
+  ami                    = data.aws_ami.valohai.id
+  instance_type          = "m5.xlarge"
+  key_name               = aws_key_pair.valohai_roi_key.id
+  vpc_security_group_ids = [var.security_group_id]
+  subnet_id              = var.subnet_id
+  iam_instance_profile   = "ValohaiMasterInstanceProfile"
 
   ebs_block_device {
     device_name = "/dev/sda1"
@@ -145,7 +145,7 @@ resource "aws_instance" "valohai_roi" {
     export SECRET_KEY=`aws secretsmanager get-secret-value --secret-id ${aws_secretsmanager_secret.valohai_secret_key.name} --region ${var.region}| sed -n 's|.*"SecretString": *"\([^"]*\)".*|\1|p'`
     export JWT_KEY=`aws secretsmanager get-secret-value --secret-id ${aws_secretsmanager_secret.valohai_jwt_key.name} --region ${var.region}| sed -n 's|.*"SecretString": *"\([^"]*\)".*|\1|p'`
 
-    sed -i "s|URL_BASE=|URL_BASE=|" /etc/roi.config
+    sed -i "s|URL_BASE=|URL_BASE=http://`curl http://169.254.169.254/latest/meta-data/public-ipv4`|" /etc/roi.config
     sed -i "s|AWS_REGION=|AWS_REGION=${var.region}|" /etc/roi.config
     sed -i "s|AWS_S3_BUCKET_NAME=|AWS_S3_BUCKET_NAME=valohai-data-${data.aws_caller_identity.current.account_id}|" /etc/roi.config
     sed -i "s|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ValohaiS3MultipartRole|" /etc/roi.config
