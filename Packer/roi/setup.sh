@@ -3,7 +3,6 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Install necessary dependencies
 sudo apt-get update -y
-sudo apt-get update
 sudo apt-get install -y -qq ca-certificates curl gnupg lsb-release python3-pip unzip
 
 # Setup AWS CLI
