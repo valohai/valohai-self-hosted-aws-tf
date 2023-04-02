@@ -98,24 +98,13 @@ resource "aws_key_pair" "valohai_roi_key" {
   }
 }
 
-# ElasticIP
-resource "aws_eip" "valohai_ip_roi" {
-  vpc      = true
-  instance = aws_instance.valohai_roi.id
-
-  tags = {
-    "Name"  = "valohai_ip_roi",
-    valohai = 1
-  }
-}
-
 # Valohai roi instance
 resource "aws_instance" "valohai_roi" {
   ami                    = data.aws_ami.valohai.id
   instance_type          = "m5.xlarge"
   key_name               = aws_key_pair.valohai_roi_key.id
-  vpc_security_group_ids = [var.security_group_id]
-  subnet_id              = var.subnet_id
+  vpc_security_group_ids = var.roi_security_group_ids
+  subnet_id              = var.roi_subnet_id
   iam_instance_profile   = "ValohaiMasterInstanceProfile"
 
   ebs_block_device {
@@ -138,6 +127,7 @@ resource "aws_instance" "valohai_roi" {
 
   user_data = <<-EOF
     #!/bin/bash
+    
     sudo systemctl stop roi
     export ROI_AUTO_MIGRATE=true
     
@@ -156,8 +146,46 @@ resource "aws_instance" "valohai_roi" {
     sed -i "s|SECRET_KEY=|SECRET_KEY=$SECRET_KEY|" /etc/roi.config
     sed -i "s|STATS_JWT_KEY=|STATS_JWT_KEY=$JWT_KEY|" /etc/roi.config
 
+    sudo systemctl start roi
+
     sudo docker run -it --env-file=/etc/roi.config valohai/roi:latest python manage.py roi_init --mode dev
-    sudo systemctl restart roi
     
     EOF
+}
+
+resource "aws_lb" "valohai_elb" {
+  name               = "valohai-elb"
+  load_balancer_type = "application"
+  internal           = false
+  subnets            = var.elb_subnet_ids
+  security_groups    = var.elb_security_group_ids
+}
+
+resource "aws_lb_target_group" "valohai_roi" {
+  name     = "valohai-roilb-tg"
+  port     = 8000
+  protocol = "HTTP"
+  vpc_id   = var.vpc_id
+  health_check {
+    enabled = true
+    matcher = "200,202"
+    path = "/healthz"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "valohai_roi" {
+  target_group_arn = aws_lb_target_group.valohai_roi.arn
+  target_id        = aws_instance.valohai_roi.id
+  port             = 8000
+}
+
+resource "aws_lb_listener" "valohai_elb" {
+  load_balancer_arn = aws_lb.valohai_elb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.valohai_roi.arn
+  }
 }

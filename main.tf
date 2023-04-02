@@ -60,15 +60,18 @@ module "SecurityGroups" {
 }
 
 module "EC2" {
-  source            = "./Module/EC2"
-  ec2_key           = var.ec2_key
-  region            = var.region
-  subnet_id         = var.public_subnet_id
-  security_group_id = module.SecurityGroups.roi_sg.id
-  environment_name  = var.environment_name
-  db_url            = module.Database.database_url
-  db_password       = module.Database.database_password
-  redis_url         = module.Redis.redis_url
+  source                 = "./Module/EC2"
+  ec2_key                = var.ec2_key
+  region                 = var.region
+  vpc_id                 = var.vpc_id
+  elb_subnet_ids         = var.elb_subnet_ids
+  roi_subnet_id          = var.roi_subnet_id
+  roi_security_group_ids = [module.SecurityGroups.roi_sg.id]
+  elb_security_group_ids = [module.SecurityGroups.elb_sg.id]
+  environment_name       = var.environment_name
+  db_url                 = module.Database.database_url
+  db_password            = module.Database.database_password
+  redis_url              = module.Redis.redis_url
 
   depends_on = [module.Database, module.IAM_Master, module.Redis]
 }
@@ -88,6 +91,6 @@ module "ASG" {
   ami               = "" # Leave empty for default
 
   depends_on = [
-    module.SecurityGroups, module.IAM_Workers
+    module.SecurityGroups, module.IAM_Workers, module.EC2
   ]
 }

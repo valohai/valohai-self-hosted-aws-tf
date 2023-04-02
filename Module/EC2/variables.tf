@@ -3,14 +3,29 @@ variable "region" {
   type        = string
 }
 
-variable "subnet_id" {
-  description = "(Public) subnet used for core Valohai web app and scaling services (Roi)"
+variable "vpc_id" {
+  description = "VPC Id used for ELB"
   type        = string
 }
 
-variable "security_group_id" {
-  description = "Security Group for the web app and scaling services (Roi) instance"
+variable "roi_subnet_id" {
+  description = "Subnet used for core Valohai web app and scaling services (Roi)"
   type        = string
+}
+
+variable "elb_subnet_ids" {
+  description = "Public subnets used for the ELB"
+  type        = list(string)
+}
+
+variable "roi_security_group_ids" {
+  description = "List of Security Group IDs for the web app and scaling services (Roi) instance"
+  type        = list(string)
+}
+
+variable "elb_security_group_ids" {
+  description = "List of Security Group IDs for ELB"
+  type        = list(string)
 }
 
 variable "ec2_key" {

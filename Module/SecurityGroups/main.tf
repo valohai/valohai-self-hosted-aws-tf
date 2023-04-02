@@ -24,11 +24,11 @@ resource "aws_security_group" "valohai_sg_roi" {
   }
 
   ingress {
-    description = "for SSH debugging"
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    description     = "for ELB Access "
+    from_port       = 8000
+    to_port         = 8000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.valohai_sg_elb.id]
   }
 
   egress {
@@ -87,6 +87,26 @@ resource "aws_security_group" "valohai_sg_queue" {
 
   tags = {
     Name    = "valohai_sg_queue",
+    valohai = 1
+  }
+}
+
+resource "aws_security_group" "valohai_sg_elb" {
+  name        = "valohai_sg_elb"
+  description = "for Valohai ELB"
+
+  vpc_id = var.vpc_id
+
+  ingress {
+    description = "for ELB"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name    = "valohai_sg_elb",
     valohai = 1
   }
 }

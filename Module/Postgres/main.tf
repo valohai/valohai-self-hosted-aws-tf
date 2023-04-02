@@ -76,7 +76,7 @@ resource "aws_db_instance" "valohai_roidb" {
   backup_retention_period   = 3
   skip_final_snapshot       = true
   final_snapshot_identifier = "valohai-roidb-latest"
-  deletion_protection       = true
+  deletion_protection       = false
 
   tags = { valohai = "1" }
 
