@@ -1,14 +1,3 @@
-terraform {
-
-  required_version = "1.4.2"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
 
 data "aws_caller_identity" "current" {}
 
@@ -22,16 +11,12 @@ resource "aws_iam_role" "valohai_data_multipart" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "AWS" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ValohaiMaster"
+          "AWS" : "arn:aws:iam::${var.aws_account_id}:role/ValohaiMaster"
         },
         "Action" : "sts:AssumeRole"
       }
     ]
   })
-
-  tags = {
-    valohai = 1,
-  }
 }
 
 resource "aws_iam_role_policy" "valohai_multipart_policy" {
@@ -55,8 +40,8 @@ resource "aws_iam_role_policy" "valohai_multipart_policy" {
           "s3:PutObject"
         ],
         "Resource" : [
-          "arn:aws:s3:::valohai-data-${data.aws_caller_identity.current.account_id}",
-          "arn:aws:s3:::valohai-data-${data.aws_caller_identity.current.account_id}/*"
+          "arn:aws:s3:::valohai-data-${var.aws_account_id}",
+          "arn:aws:s3:::valohai-data-${var.aws_account_id}/*"
         ]
       }
     ]

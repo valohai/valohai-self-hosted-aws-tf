@@ -1,15 +1,3 @@
-terraform {
-
-  required_version = "1.4.2"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
 # Get the AMI for peon instance
 data "aws_ami" "valohai" {
   most_recent = true
@@ -27,6 +15,10 @@ data "aws_ami" "valohai" {
   owners = ["910181886844"] # Valohai Staging
 }
 
+data "aws_security_group" "valohai_sg_workers" {
+  name = "valohai-sg-workers"
+}
+
 resource "aws_launch_template" "valohai_worker_lt" {
   name_prefix            = "valohai-worker-${var.instance_type}-template"
   image_id               = (var.ami == "") ? data.aws_ami.valohai.id : var.ami
@@ -34,10 +26,17 @@ resource "aws_launch_template" "valohai_worker_lt" {
   key_name               = "valohai_${var.region}"
   user_data              = base64encode(templatefile("${path.module}/peon/userdata", { queue_name = "${var.region}-${var.instance_type}", redis_url = "redis://:@${var.redis_url}:6379" }))
   update_default_version = true
+  ebs_optimized          = true
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
 
   network_interfaces {
     associate_public_ip_address = var.assign_public_ip
-    security_groups             = [var.security_group_id]
+    security_groups             = [data.aws_security_group.valohai_sg_workers.id]
     delete_on_termination       = true
   }
 
@@ -52,6 +51,7 @@ resource "aws_launch_template" "valohai_worker_lt" {
       volume_type           = "gp2"
       delete_on_termination = true
       volume_size           = var.ebs_disk_size
+      encrypted             = true
     }
   }
 
@@ -59,8 +59,7 @@ resource "aws_launch_template" "valohai_worker_lt" {
     resource_type = "instance"
 
     tags = {
-      "valohai" = 1
-      "Role"    = "ValohaiWorker"
+      "Role" = "ValohaiWorker"
     }
   }
 }

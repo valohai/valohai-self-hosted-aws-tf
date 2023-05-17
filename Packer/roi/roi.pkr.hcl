@@ -1,6 +1,6 @@
 variable "region" {
   type    = string
-  default = "us-east-1"
+  default = "eu-west-2"
 }
 
 variable "aws_profile" {
@@ -29,7 +29,8 @@ source "amazon-ebs" "valohai_roi" {
 
   source_ami_filter {
     filters = {
-      name                = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-*"
+      name                = "ubuntu-pro-server/images/hvm-ssd/ubuntu-jammy-22.04-amd64-*" # CIS Hardened Ubuntu 22.04
+      #name                = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-*"            # Standard Ubuntu 22.04
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
@@ -37,7 +38,31 @@ source "amazon-ebs" "valohai_roi" {
     owners      = ["099720109477"] # Canonical
   }
 
-  ami_users = ["450886142693"] # Which AWS Account can access this image
+  ami_users = [
+    "450886142693", # Valohai Sandbox
+    "790096077483" # PRH
+  ]
+
+  ami_regions = [
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-northeast-3",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2"
+  ]
+
 }
 
 build {

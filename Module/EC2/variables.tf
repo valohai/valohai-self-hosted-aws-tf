@@ -8,25 +8,31 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "aws_account_id" {
+  description = "AWS Account ID"
+  type        = string
+}
+
 variable "roi_subnet_id" {
   description = "Subnet used for core Valohai web app and scaling services (Roi)"
   type        = string
 }
 
-variable "elb_subnet_ids" {
-  description = "Public subnets used for the ELB"
+variable "lb_target_group_id" {
+  description = "ARN of the load balancer"
+  type        = string
+}
+
+variable "lb_sg" {
+  description = "Security Group for load balancer"
   type        = list(string)
 }
 
-variable "roi_security_group_ids" {
-  description = "List of Security Group IDs for the web app and scaling services (Roi) instance"
-  type        = list(string)
+variable "bastion_sg" {
+  description = "Security Group for Bastion"
+  type        = string
 }
 
-variable "elb_security_group_ids" {
-  description = "List of Security Group IDs for ELB"
-  type        = list(string)
-}
 
 variable "ec2_key" {
   description = "Local location of the public key that should be attached to the Valohai owned EC2 instances"
@@ -51,5 +57,10 @@ variable "db_password" {
 
 variable "environment_name" {
   description = "Name of the environment / organization (e.g. MyOrg)"
+  type        = string
+}
+
+variable "domain" {
+  description = "Address that will be used to access the service"
   type        = string
 }

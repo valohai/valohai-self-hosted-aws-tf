@@ -1,5 +1,5 @@
 variable "vpc_id" {
-  description = "VPC Id where the Valohai Postgresql database will be placed in."
+  description = "VPC Id used for ELB"
   type        = string
 }
 
@@ -20,11 +20,6 @@ variable "redis_url" {
 
 variable "instance_type" {
   description = "Instance type of Valohai workers"
-  type        = string
-}
-
-variable "security_group_id" {
-  description = "Security Groups to attach to this type"
   type        = string
 }
 

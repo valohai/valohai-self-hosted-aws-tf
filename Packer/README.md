@@ -18,5 +18,5 @@ Before you can build a new image with Packer, you'll need to update the `variabl
 Build a new Roi image with:
 ```bash
 cd roi
-packer build -var-file="variables.pkrvars.hcl" roi.pkr.hcl   
+packer build -var-file="variables.pkrvars.hcl" roi.pkr.hcl  
 ```

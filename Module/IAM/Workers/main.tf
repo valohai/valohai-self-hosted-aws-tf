@@ -1,15 +1,3 @@
-terraform {
-
-  required_version = "1.4.2"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
 resource "aws_iam_role_policy" "valohai_worker_policy" {
   name = "ValohaiWorkerPolicy"
   role = aws_iam_role.valohai_worker_role.name
@@ -49,10 +37,6 @@ resource "aws_iam_role" "valohai_worker_role" {
       }
     ]
   })
-
-  tags = {
-    valohai = 1,
-  }
 }
 
 resource "aws_iam_instance_profile" "valohai_worker_profile" {

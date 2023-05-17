@@ -1,2 +1,2 @@
-aws_profile = # "valohai-staging"
-region      = # "us-east-1"
+aws_profile = "valohai-customer-ami"
+region      = "eu-west-1"

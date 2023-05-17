@@ -1,16 +1,5 @@
-terraform {
-
-  required_version = "1.4.2"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
 data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role" "valohai_master_role" {
   name = "ValohaiMaster"
 
@@ -26,10 +15,6 @@ resource "aws_iam_role" "valohai_master_role" {
       }
     ]
   })
-
-  tags = {
-    valohai = 1,
-  }
 }
 
 resource "aws_iam_instance_profile" "valohai_master_profile" {
@@ -100,21 +85,15 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
           "iam:PassRole",
           "iam:GetRole"
         ],
-        "Resource" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ValohaiWorkerRole"
+        "Resource" : "arn:aws:iam::${var.aws_account_id}:role/ValohaiWorkerRole"
       },
       {
         "Sid" : "0",
         "Effect" : "Allow",
-        "Condition" : {
-          "StringEquals" : {
-            "secretsmanager:ResourceTag/valohai" : "1"
-          }
-        },
         "Action" : [
-          "secretsmanager:GetResourcePolicy",
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret",
-          "secretsmanager:ListSecretVersionIds"
+          "ssm:GetParameter",
+          "ssm:GetParameters",
+          "ssm:DescribeParameters"
         ],
         "Resource" : "*"
       },
@@ -128,11 +107,10 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
         "Effect" : "Allow",
         "Action" : "s3:*",
         "Resource" : [
-          "arn:aws:s3:::valohai-data-${data.aws_caller_identity.current.account_id}",
-          "arn:aws:s3:::valohai-data-${data.aws_caller_identity.current.account_id}/*"
+          "arn:aws:s3:::valohai-data-${var.aws_account_id}",
+          "arn:aws:s3:::valohai-data-${var.aws_account_id}/*"
         ]
       }
     ]
   })
 }
-

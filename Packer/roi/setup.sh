@@ -5,6 +5,8 @@ export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update -y
 sudo apt-get install -y -qq ca-certificates curl gnupg lsb-release python3-pip unzip
 
+sudo snap install amazon-ssm-agent --classic -y
+
 # Setup AWS CLI
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
@@ -37,3 +39,6 @@ sudo docker tag 905675611115.dkr.ecr.eu-west-1.amazonaws.com/valohai/roi:latest 
 
 sudo systemctl daemon-reload
 sudo systemctl enable roi
+
+sudo snap install amazon-ssm-agent --classic
+sudo snap list amazon-ssm-agent
