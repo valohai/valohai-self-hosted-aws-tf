@@ -87,3 +87,18 @@ variable "aws_instances_types" {
     "g5.2xlarge"
   ]
 }
+
+variable "aws_instances_types" {
+  description = "List of AWS instance types that should be created"
+  type        = list(string)
+  default = [
+    "t3.small",
+    "t3.medium",
+    "c5.xlarge",
+    "c5.2xlarge",
+    "c5.4xlarge",
+    "r4.xlarge",
+    "p2.xlarge",
+    "p3.2xlarge"
+  ]
+}
