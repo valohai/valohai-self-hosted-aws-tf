@@ -1,7 +1,11 @@
-output "valohai_queue_public_ip" {
-  value = aws_eip.valohai_ip_roi.public_ip
+output "security_group_id" {
+  value = aws_security_group.valohai_sg_roi.id
 }
 
-output "valohai_queue_private_ip" {
-  value = aws_instance.valohai_roi.private_ip
+output "worker_security_group_id" {
+  value = aws_security_group.valohai_sg_workers.id
+}
+
+output "instance_id" {
+  value = aws_instance.valohai_roi.id
 }

@@ -1,5 +1,5 @@
 variable "vpc_id" {
-  description = "VPC Id where the Valohai Postgresql database will be placed in."
+  description = "VPC Id used for ELB"
   type        = string
 }
 
@@ -23,11 +23,6 @@ variable "instance_type" {
   type        = string
 }
 
-variable "security_group_id" {
-  description = "Security Groups to attach to this type"
-  type        = string
-}
-
 variable "region" {
   description = "Region"
   type        = string
@@ -42,11 +37,17 @@ variable "assign_public_ip" {
 variable "instance_profile" {
   description = "InstanceProfile to attach to Valohai Workers"
   type        = string
-  default     = "ValohaiWorkerProfile"
+  default     = "dev-valohai-iamr-worker"
 }
 
 variable "ebs_disk_size" {
   description = "EBS disk size for Valohai instances"
+  type        = string
+  default     = "50"
+}
+
+variable "worker_sg_id" {
+  description = "Valohai Worker security group"
   type        = string
   default     = "50"
 }

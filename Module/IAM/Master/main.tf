@@ -1,18 +1,7 @@
-terraform {
-
-  required_version = "1.4.2"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
 data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role" "valohai_master_role" {
-  name = "ValohaiMaster"
+  name = "dev-valohai-iamr-master"
 
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
@@ -26,19 +15,15 @@ resource "aws_iam_role" "valohai_master_role" {
       }
     ]
   })
-
-  tags = {
-    valohai = 1,
-  }
 }
 
 resource "aws_iam_instance_profile" "valohai_master_profile" {
-  name = "ValohaiMasterInstanceProfile"
+  name = "dev-valohai-iami-master"
   role = aws_iam_role.valohai_master_role.name
 }
 
 resource "aws_iam_role_policy" "valohai_master_policy" {
-  name = "ValohaiMasterPolicy"
+  name = "dev-valohai-iamp-master"
   role = aws_iam_role.valohai_master_role.name
 
   policy = jsonencode({
@@ -100,21 +85,15 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
           "iam:PassRole",
           "iam:GetRole"
         ],
-        "Resource" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ValohaiWorkerRole"
+        "Resource" : "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-worker"
       },
       {
         "Sid" : "0",
         "Effect" : "Allow",
-        "Condition" : {
-          "StringEquals" : {
-            "secretsmanager:ResourceTag/valohai" : "1"
-          }
-        },
         "Action" : [
-          "secretsmanager:GetResourcePolicy",
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret",
-          "secretsmanager:ListSecretVersionIds"
+          "ssm:GetParameter",
+          "ssm:GetParameters",
+          "ssm:DescribeParameters"
         ],
         "Resource" : "*"
       },
@@ -128,11 +107,106 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
         "Effect" : "Allow",
         "Action" : "s3:*",
         "Resource" : [
-          "arn:aws:s3:::valohai-data-${data.aws_caller_identity.current.account_id}",
-          "arn:aws:s3:::valohai-data-${data.aws_caller_identity.current.account_id}/*"
+          "arn:aws:s3:::${var.s3_bucket_name}",
+          "arn:aws:s3:::${var.s3_bucket_name}"
+        ]
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ssm:GetServiceSetting",
+          "ssm:ResetServiceSetting",
+          "ssm:UpdateServiceSetting"
+        ],
+        "Resource" : "arn:aws:ssm:eu-west-2:${var.aws_account_id}:servicesetting/ssm/managed-instance/default-instance-management-role"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "iam:PassRole"
+        ],
+        "Resource" : "arn:aws:iam::${var.aws_account_id}:role/service-role/AWSSystemsManagerDefaultEC2InstanceManagementRole",
+        "Condition" : {
+          "StringEquals" : {
+            "iam:PassedToService" : [
+              "ssm.amazonaws.com"
+            ]
+          }
+        }
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ssm:DescribeAssociation",
+          "ssm:GetDeployablePatchSnapshotForInstance",
+          "ssm:GetDocument",
+          "ssm:DescribeDocument",
+          "ssm:GetManifest",
+          "ssm:GetParameter",
+          "ssm:GetParameters",
+          "ssm:ListAssociations",
+          "ssm:ListInstanceAssociations",
+          "ssm:PutInventory",
+          "ssm:PutComplianceItems",
+          "ssm:PutConfigurePackageResult",
+          "ssm:UpdateAssociationStatus",
+          "ssm:UpdateInstanceAssociationStatus",
+          "ssm:UpdateInstanceInformation"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ec2messages:AcknowledgeMessage",
+          "ec2messages:DeleteMessage",
+          "ec2messages:FailMessage",
+          "ec2messages:GetEndpoint",
+          "ec2messages:GetMessages",
+          "ec2messages:SendReply"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ssm:StartSession"
+        ],
+        "Resource" : [
+          "arn:aws:ec2:eu-west-2:${var.aws_account_id}:instance/*",
+          "arn:aws:ssm:eu-west-2:${var.aws_account_id}:document/SSM-SessionManagerRunShell"
+        ]
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ssm:TerminateSession",
+          "ssm:ResumeSession"
+        ],
+        "Resource" : [
+          "arn:aws:ssm:*:*:session/*"
+        ]
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "kms:GenerateDataKey"
+        ],
+        "Resource" : [
+          "arn:aws:kms:eu-west-2:${var.aws_account_id}:key/2ee47c2d-1179-4808-aa56-48ce95065dff",
+          "arn:aws:kms:eu-west-2:${var.aws_account_id}:key/360825e7-5793-4834-b609-17fb568964c8",
         ]
       }
     ]
   })
 }
-

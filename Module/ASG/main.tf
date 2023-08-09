@@ -1,15 +1,3 @@
-terraform {
-
-  required_version = "1.4.2"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
 # Get the AMI for peon instance
 data "aws_ami" "valohai" {
   most_recent = true
@@ -24,20 +12,27 @@ data "aws_ami" "valohai" {
     values = ["hvm"]
   }
 
-  owners = ["910181886844"] # Valohai Staging
+  owners = ["635691382966"] # Valohai Customer
 }
 
 resource "aws_launch_template" "valohai_worker_lt" {
-  name_prefix            = "valohai-worker-${var.instance_type}-template"
+  name_prefix            = "valohai-lt-worker-${var.instance_type}"
   image_id               = (var.ami == "") ? data.aws_ami.valohai.id : var.ami
   instance_type          = var.instance_type
-  key_name               = "valohai_${var.region}"
+  key_name               = "dev-valohai-key-valohai"
   user_data              = base64encode(templatefile("${path.module}/peon/userdata", { queue_name = "${var.region}-${var.instance_type}", redis_url = "redis://:@${var.redis_url}:6379" }))
   update_default_version = true
+  ebs_optimized          = true
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
 
   network_interfaces {
     associate_public_ip_address = var.assign_public_ip
-    security_groups             = [var.security_group_id]
+    security_groups             = [var.worker_sg_id]
     delete_on_termination       = true
   }
 
@@ -52,6 +47,7 @@ resource "aws_launch_template" "valohai_worker_lt" {
       volume_type           = "gp2"
       delete_on_termination = true
       volume_size           = var.ebs_disk_size
+      encrypted             = true
     }
   }
 
@@ -59,14 +55,15 @@ resource "aws_launch_template" "valohai_worker_lt" {
     resource_type = "instance"
 
     tags = {
-      "valohai" = 1
-      "Role"    = "ValohaiWorker"
+      "Role"             = "ValohaiWorker"
+      "ProvisionedUsing" = "Terraform"
+      "valohai"          = "1"
     }
   }
 }
 
 resource "aws_autoscaling_group" "valohai_worker_asg" {
-  name                      = "valohai-worker-${var.instance_type}"
+  name                      = "dev-valohai-asg-worker-${var.instance_type}"
   max_size                  = 100
   min_size                  = 0
   health_check_grace_period = 0
@@ -90,8 +87,9 @@ resource "aws_autoscaling_group" "valohai_worker_asg" {
   }
 
   tag {
-    key                 = "Role"
-    value               = "Valohai-Worker"
+    key                 = "ProvisionedUsing"
+    value               = "Terraform"
     propagate_at_launch = true
   }
+
 }
