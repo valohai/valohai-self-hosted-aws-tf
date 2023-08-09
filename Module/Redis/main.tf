@@ -6,13 +6,13 @@ data "aws_vpc" "valohai_vpc" {
 }
 
 resource "aws_elasticache_subnet_group" "valohai_queue_subnet" {
-  name       = "valohai-queue-subnet"
+  name       = "dev-valohai-elcsg-queue"
   subnet_ids = var.cache_subnet_ids
 
 }
 
 resource "aws_elasticache_cluster" "valohai_queue" {
-  cluster_id               = "valohai-queue"
+  cluster_id               = "dev-valohai-elc-queue"
   engine                   = "redis"
   node_type                = "cache.m4.xlarge"
   num_cache_nodes          = 1
@@ -25,7 +25,7 @@ resource "aws_elasticache_cluster" "valohai_queue" {
 }
 
 resource "aws_security_group" "valohai_sg_queue" {
-  name        = "valohai_sg_queue"
+  name        = "dev-valohai-sg-queue"
   description = "for Valohai Queue"
 
   vpc_id = var.vpc_id
@@ -39,6 +39,6 @@ resource "aws_security_group" "valohai_sg_queue" {
   }
 
   tags = {
-    Name = "valohai_sg_queue",
+    Name = "dev-valohai-sg-queue",
   }
 }

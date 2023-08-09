@@ -1,10 +1,16 @@
 variable "aws_profile" {
-  description = "AWS Profile name (~/.aws/credentials)"
+  description = "AWS profile to be used"
   type        = string
 }
 
-variable "region" {
+variable "aws_region" {
   description = "AWS region for Valohai resources"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "aws_account_id" {
+  description = "AWS Account ID"
   type        = string
 }
 
@@ -13,8 +19,8 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "elb_subnet_ids" {
-  description = "List of subnet IDs for ELB"
+variable "lb_subnet_ids" {
+  description = "List of subnet IDs for load balancer"
   type        = list(string)
 }
 
@@ -33,15 +39,38 @@ variable "worker_subnet_ids" {
   type        = list(string)
 }
 
-
 variable "ec2_key" {
   description = "Location of the ssh key pub file that can be used for Valohai managed instances"
+  type        = string
+  default     = ".valohai.pub"
+}
+
+variable "s3_bucket_name" {
+  description = "Unique name for the S3 bucket that's used as the default output storage for Valohai"
+  type        = string
+}
+
+variable "s3_logs_name" {
+  description = "Unique name for the S3 bucket that's used as the default log storage"
   type        = string
 }
 
 variable "environment_name" {
   description = "Name of the environment / organization (e.g. MyOrg)"
   type        = string
+  default     = "My Valohai Org"
+}
+
+variable "domain" {
+  description = "Address that will be used to access the service"
+  type        = string
+  default     = "" #"http://valohai.myorg.com"
+}
+
+variable "certificate_arn" {
+  description = "Certificate ARN"
+  type        = string
+  default     = "" # "arn:aws:acm:REGION:ACCOUNT:certificate/ID"
 }
 
 variable "aws_instances_types" {
@@ -54,7 +83,7 @@ variable "aws_instances_types" {
     "c5.2xlarge",
     "c5.4xlarge",
     "r4.xlarge",
-    "p2.xlarge",
-    "p3.2xlarge"
+    "p3.2xlarge",
+    "g5.2xlarge"
   ]
 }

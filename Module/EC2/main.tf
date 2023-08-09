@@ -13,21 +13,11 @@ resource "aws_kms_key" "valohai_kms_key" {
         "Effect" : "Allow",
         "Principal" : {
           "AWS" : [
-            "arn:aws:iam::${var.aws_account_id}:root"
+            "arn:aws:iam::${var.aws_account_id}:root",
+            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-master",
           ]
         },
         "Action" : "kms:*",
-        "Resource" : "*"
-      },
-      {
-        "Sid" : "Allow Valohai master to read",
-        "Effect" : "Allow",
-        "Principal" : {
-          "AWS" : [
-            "arn:aws:iam::${var.aws_account_id}:role/ValohaiMaster",
-          ]
-        },
-        "Action" : ["kms:Decrypt", "kms:DescribeKey"],
         "Resource" : "*"
       }
     ]
@@ -36,7 +26,6 @@ resource "aws_kms_key" "valohai_kms_key" {
 
 resource "aws_kms_alias" "valohai_kms_alias" {
   target_key_id = aws_kms_key.valohai_kms_key.key_id
-  name          = "alias/valohai-alias"
 }
 
 resource "random_password" "repo_private_key" {
@@ -45,7 +34,7 @@ resource "random_password" "repo_private_key" {
 }
 
 resource "aws_ssm_parameter" "repo_private_key" {
-  name        = "valohai-repo-key"
+  name        = "dev-valohai-ssm-repo"
   type        = "SecureString"
   description = "Secure repository key for Valohai"
   value       = random_password.repo_private_key.result
@@ -58,7 +47,7 @@ resource "random_password" "secret_key" {
 }
 
 resource "aws_ssm_parameter" "secret_key" {
-  name        = "valohai-secret-key"
+  name        = "dev-valohai-ssm-secret"
   type        = "SecureString"
   description = "Secure secret key for Valohai"
   value       = random_password.secret_key.result
@@ -71,7 +60,7 @@ resource "random_password" "jwt_key" {
 }
 
 resource "aws_ssm_parameter" "jwt_key" {
-  name        = "valohai-jwt-key"
+  name        = "dev-valohai-ssm-jwt"
   type        = "SecureString"
   description = "Secure jwt key for Valohai"
   value       = random_password.jwt_key.result
@@ -92,16 +81,16 @@ data "aws_ami" "valohai" {
     values = ["hvm"]
   }
 
-  owners = ["910181886844"] # Valohai Staging
+  owners = ["910181886844"]
 }
 
 # Load public key
 resource "aws_key_pair" "valohai_roi_key" {
-  key_name   = "valohai_${var.region}"
+  key_name   = "dev-valohai-key-valohai"
   public_key = file(var.ec2_key)
 
   tags = {
-    Name = "valohai_roi_key",
+    Name = "dev-valohai-key-valohai",
   }
 }
 
@@ -112,7 +101,7 @@ resource "aws_instance" "valohai_roi" {
   key_name               = aws_key_pair.valohai_roi_key.id
   vpc_security_group_ids = [aws_security_group.valohai_sg_roi.id]
   subnet_id              = var.roi_subnet_id
-  iam_instance_profile   = "ValohaiMasterInstanceProfile"
+  iam_instance_profile   = "dev-valohai-iami-master"
   monitoring             = true
   ebs_optimized          = true
 
@@ -136,7 +125,7 @@ resource "aws_instance" "valohai_roi" {
   }
 
   tags = {
-    Name = "valohai_roi",
+    Name = "dev-valohai-ec2-roi",
   }
 
   user_data = <<-EOF
@@ -149,10 +138,10 @@ resource "aws_instance" "valohai_roi" {
     export SECRET_KEY=`aws ssm get-parameter --name ${aws_ssm_parameter.secret_key.name} --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
     export JWT_KEY=`aws ssm get-parameter --name ${aws_ssm_parameter.jwt_key.name} --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
 
-    sed -i "s|URL_BASE=|URL_BASE=${var.domain} |" /etc/roi.config
+    sed -i "s|URL_BASE=|URL_BASE=${var.domain}|" /etc/roi.config
     sed -i "s|AWS_REGION=|AWS_REGION=${var.region}|" /etc/roi.config
-    sed -i "s|AWS_S3_BUCKET_NAME=|AWS_S3_BUCKET_NAME=valohai-data-${var.aws_account_id}|" /etc/roi.config
-    sed -i "s|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=arn:aws:iam::${var.aws_account_id}:role/ValohaiS3MultipartRole|" /etc/roi.config
+    sed -i "s|AWS_S3_BUCKET_NAME=|AWS_S3_BUCKET_NAME=${var.s3_bucket_name}|" /etc/roi.config
+    sed -i "s|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-multipart|" /etc/roi.config
     sed -i "s|CELERY_BROKER=|CELERY_BROKER=redis://${var.redis_url}:6379|" /etc/roi.config
     sed -i "s|DATABASE_URL=|DATABASE_URL=psql://roi:${var.db_password}@${var.db_url}:5432/valohairoidb|" /etc/roi.config
     sed -i "s|PLATFORM_LONG_NAME=|PLATFORM_LONG_NAME=${var.environment_name}|" /etc/roi.config
@@ -165,11 +154,12 @@ resource "aws_instance" "valohai_roi" {
     sudo docker run -it --env-file=/etc/roi.config valohai/roi:latest python manage.py migrate --mode dev
     sudo docker run -it --env-file=/etc/roi.config valohai/roi:latest python manage.py roi_init --mode dev
 
+    sudo snap start amazon-ssm-agent
     EOF
 }
 
 resource "aws_security_group" "valohai_sg_roi" {
-  name        = "valohai_sg_roi"
+  name        = "dev-valohai-sg-roi"
   description = "for Valohai Roi"
 
   vpc_id = var.vpc_id
@@ -179,15 +169,7 @@ resource "aws_security_group" "valohai_sg_roi" {
     from_port       = 8000
     to_port         = 8000
     protocol        = "tcp"
-    security_groups = var.lb_sg
-  }
-
-  ingress {
-    description     = "for Valohai SSH access"
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    security_groups = [var.bastion_sg]
+    security_groups = [var.lb_sg, aws_security_group.valohai_sg_workers.id]
   }
 
   egress {
@@ -199,7 +181,7 @@ resource "aws_security_group" "valohai_sg_roi" {
   }
 
   tags = {
-    Name = "valohai_sg_roi",
+    Name = "dev-valohai-sg-roi",
   }
 }
 
@@ -210,7 +192,8 @@ resource "aws_lb_target_group_attachment" "valohai_roi" {
 }
 
 resource "aws_security_group" "valohai_sg_workers" {
-  name        = "valohai_sg_workers"
+  #checkov:skip=CKV2_AWS_5:Ensure security groups are attached to another resource
+  name        = "dev-valohai-sg-workers"
   description = "for Valohai workers"
 
   vpc_id = var.vpc_id
@@ -224,6 +207,6 @@ resource "aws_security_group" "valohai_sg_workers" {
   }
 
   tags = {
-    Name = "valohai_sg_workers",
+    Name = "dev-valohai-sg-workers",
   }
 }

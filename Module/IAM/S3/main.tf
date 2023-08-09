@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role" "valohai_data_multipart" {
-  name        = "ValohaiS3MultipartRole"
+  name        = "dev-valohai-iamr-multipart"
   description = "Allows users to save files over 5GB from their executions"
 
   assume_role_policy = jsonencode({
@@ -11,7 +11,7 @@ resource "aws_iam_role" "valohai_data_multipart" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "AWS" : "arn:aws:iam::${var.aws_account_id}:role/ValohaiMaster"
+          "AWS" : "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-master"
         },
         "Action" : "sts:AssumeRole"
       }
@@ -20,7 +20,7 @@ resource "aws_iam_role" "valohai_data_multipart" {
 }
 
 resource "aws_iam_role_policy" "valohai_multipart_policy" {
-  name = "ValohaiS3MultipartPolicy"
+  name = "dev-valohai-iamp-multipart"
   role = aws_iam_role.valohai_data_multipart.name
 
   policy = jsonencode({
@@ -40,8 +40,8 @@ resource "aws_iam_role_policy" "valohai_multipart_policy" {
           "s3:PutObject"
         ],
         "Resource" : [
-          "arn:aws:s3:::valohai-data-${var.aws_account_id}",
-          "arn:aws:s3:::valohai-data-${var.aws_account_id}/*"
+          "arn:aws:s3:::${var.s3_bucket_name}",
+          "arn:aws:s3:::${var.s3_bucket_name}/*"
         ]
       }
     ]

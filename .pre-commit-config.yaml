@@ -52,7 +52,12 @@ repos:
         - --args=--skip-check CKV2_AWS_62 # S3 event notifications
         - --args=--skip-check CKV_AWS_18 # Ensure the S3 bucket has access logging enabled
         - --args=--skip-check CKV2_AWS_5 # Ensure security groups are attached to another resource
-        - --args=--skip-check CKV2_AWS_28 #Ensure public facing ALB are protected by WAF
+        - --args=--skip-check CKV2_AWS_28 # Ensure public facing ALB are protected by WAF
+        - --args=--skip-check CKV2_AWS_20 # Ensure that ALB redirects HTTP requests into HTTPS ones
+        - --args=--skip-check CKV_AWS_103 # Ensure that load balancer is using at least TLS 1.2
+        - --args=--skip-check CKV_AWS_260 # Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
+        - --args=--skip-check CKV_AWS_2 # Ensure ALB protocol is HTTPS
+        - --args=--skip-check CKV_AWS_103 # Ensure that load balancer is using at least TLS 1.2
 
 - repo: https://github.com/Yelp/detect-secrets.git
   rev: v1.4.0

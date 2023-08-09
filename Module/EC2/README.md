@@ -41,17 +41,17 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
-| <a name="input_bastion_sg"></a> [bastion\_sg](#input\_bastion\_sg) | Security Group for Bastion | `string` | n/a | yes |
 | <a name="input_db_password"></a> [db\_password](#input\_db\_password) | Password for the Postgresql database | `string` | n/a | yes |
 | <a name="input_db_url"></a> [db\_url](#input\_db\_url) | Address of the Postgresql database used for Valohai | `string` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | Address that will be used to access the service | `string` | n/a | yes |
 | <a name="input_ec2_key"></a> [ec2\_key](#input\_ec2\_key) | Local location of the public key that should be attached to the Valohai owned EC2 instances | `string` | n/a | yes |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment / organization (e.g. MyOrg) | `string` | n/a | yes |
-| <a name="input_lb_sg"></a> [lb\_sg](#input\_lb\_sg) | Security Group for load balancer | `list(string)` | n/a | yes |
+| <a name="input_lb_sg"></a> [lb\_sg](#input\_lb\_sg) | Security Group for load balancer | `string` | n/a | yes |
 | <a name="input_lb_target_group_id"></a> [lb\_target\_group\_id](#input\_lb\_target\_group\_id) | ARN of the load balancer | `string` | n/a | yes |
 | <a name="input_redis_url"></a> [redis\_url](#input\_redis\_url) | Address of the redis (node) that will host the job queue and short term logs. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | Region | `string` | n/a | yes |
 | <a name="input_roi_subnet_id"></a> [roi\_subnet\_id](#input\_roi\_subnet\_id) | Subnet used for core Valohai web app and scaling services (Roi) | `string` | n/a | yes |
+| <a name="input_s3_bucket_name"></a> [s3\_bucket\_name](#input\_s3\_bucket\_name) | Unique name for the S3 bucket that's used as the default output storage for Valohai | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id used for ELB | `string` | n/a | yes |
 
 ## Outputs
@@ -60,4 +60,5 @@ No modules.
 |------|-------------|
 | <a name="output_instance_id"></a> [instance\_id](#output\_instance\_id) | n/a |
 | <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | n/a |
+| <a name="output_worker_security_group_id"></a> [worker\_security\_group\_id](#output\_worker\_security\_group\_id) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

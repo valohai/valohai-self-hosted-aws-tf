@@ -37,11 +37,17 @@ variable "assign_public_ip" {
 variable "instance_profile" {
   description = "InstanceProfile to attach to Valohai Workers"
   type        = string
-  default     = "ValohaiWorkerProfile"
+  default     = "dev-valohai-iamr-worker"
 }
 
 variable "ebs_disk_size" {
   description = "EBS disk size for Valohai instances"
+  type        = string
+  default     = "50"
+}
+
+variable "worker_sg_id" {
+  description = "Valohai Worker security group"
   type        = string
   default     = "50"
 }

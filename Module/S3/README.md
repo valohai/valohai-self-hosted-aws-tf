@@ -21,7 +21,6 @@ No modules.
 |------|------|
 | [aws_kms_key.valohai_data_kms_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_s3_bucket.valohai_data](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
-| [aws_s3_bucket_acl.valohai_acl](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_acl) | resource |
 | [aws_s3_bucket_cors_configuration.valohai_cors](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_cors_configuration) | resource |
 | [aws_s3_bucket_lifecycle_configuration.valohai_data_lifecycle](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_lifecycle_configuration) | resource |
 | [aws_s3_bucket_public_access_block.valohai_datablock_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
@@ -35,6 +34,8 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | Address that will be used to access the service | `string` | n/a | yes |
+| <a name="input_s3_bucket_name"></a> [s3\_bucket\_name](#input\_s3\_bucket\_name) | Unique name for the S3 bucket that's used as the default output storage for Valohai | `string` | n/a | yes |
+| <a name="input_s3_logs_name"></a> [s3\_logs\_name](#input\_s3\_logs\_name) | Unique name for the S3 bucket that's used as the default log storage | `string` | n/a | yes |
 
 ## Outputs
 

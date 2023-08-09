@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_kms_key" "valohai_data_kms_key" {
-  description         = "Valohai KMS key for valohai-data"
+  description         = "Valohai KMS key for default S3 bucket"
   enable_key_rotation = true
 
   policy = jsonencode({
@@ -14,7 +14,9 @@ resource "aws_kms_key" "valohai_data_kms_key" {
         "Principal" : {
           "AWS" : [
             "arn:aws:iam::${var.aws_account_id}:root",
-            "arn:aws:iam::${var.aws_account_id}:role/ValohaiMaster"
+            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-master",
+            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-worker",
+            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-multipart"
           ]
         },
         "Action" : "kms:*",
@@ -25,8 +27,16 @@ resource "aws_kms_key" "valohai_data_kms_key" {
 }
 
 resource "aws_s3_bucket" "valohai_data" {
-  bucket        = "valohai-data-${var.aws_account_id}"
+  #checkov:skip=CKV_AWS_144:S3 cross-region duplication
+  #checkov:skip=CKV2_AWS_62:Ignore event notifications.
+  #checkov:skip=CKV_AWS_18:Ensure the S3 bucket has access logging enabled
+  bucket        = var.s3_bucket_name
   force_destroy = true
+
+  logging {
+    target_bucket = var.s3_logs_name
+    target_prefix = "log/${var.s3_bucket_name}"
+  }
 }
 
 resource "aws_s3_bucket_versioning" "valohai_data_versioning" {
@@ -43,11 +53,6 @@ resource "aws_s3_bucket_public_access_block" "valohai_datablock_access" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
-
-resource "aws_s3_bucket_acl" "valohai_acl" {
-  bucket = aws_s3_bucket.valohai_data.id
-  acl    = "private"
 }
 
 resource "aws_s3_bucket_cors_configuration" "valohai_cors" {

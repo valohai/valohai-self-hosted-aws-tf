@@ -20,21 +20,12 @@ resource "aws_kms_key" "valohai_db_kms_key" {
         "Effect" : "Allow",
         "Principal" : {
           "AWS" : [
-            "arn:aws:iam::${var.aws_account_id}:root"
+            "arn:aws:iam::${var.aws_account_id}:root",
+            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-master",
+            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-rdsmonitor",
           ]
         },
         "Action" : "kms:*",
-        "Resource" : "*"
-      },
-      {
-        "Sid" : "Allow Valohai master to read",
-        "Effect" : "Allow",
-        "Principal" : {
-          "AWS" : [
-            "arn:aws:iam::${var.aws_account_id}:role/ValohaiMaster",
-          ]
-        },
-        "Action" : ["kms:Decrypt", "kms:DescribeKey"],
         "Resource" : "*"
       }
     ]
@@ -43,7 +34,7 @@ resource "aws_kms_key" "valohai_db_kms_key" {
 
 resource "aws_kms_alias" "valohai_kms_alias" {
   target_key_id = aws_kms_key.valohai_db_kms_key.key_id
-  name          = "alias/valohai-db-alias"
+  name          = "alias/dev-valohai-kmsa-valohaidb"
 }
 
 resource "random_password" "password" {
@@ -52,7 +43,7 @@ resource "random_password" "password" {
 }
 
 resource "aws_ssm_parameter" "db_password" {
-  name        = "valohai-db-password"
+  name        = "dev-valohai-ssm-dbpassword"
   type        = "SecureString"
   description = "Password for Valohai roidb"
   value       = random_password.password.result
@@ -60,13 +51,13 @@ resource "aws_ssm_parameter" "db_password" {
 }
 
 resource "aws_db_subnet_group" "valohai_roidb_subnet" {
-  name       = "valohai_roidb_subnet"
+  name       = "dev-valohai-rds-subnet"
   subnet_ids = var.db_subnet_ids
 
 }
 
 resource "aws_security_group" "valohai_roidb_sg" {
-  name        = "valohai_roidb_sg"
+  name        = "dev-valohai-rds-db"
   description = "Valohai RDS security group"
   vpc_id      = var.vpc_id
 
@@ -80,7 +71,7 @@ resource "aws_security_group" "valohai_roidb_sg" {
 }
 
 resource "aws_db_parameter_group" "valohai_roidb" {
-  name   = "valohai-roidb-pg"
+  name   = "dev-valohai-rdspg-db"
   family = "postgres14"
 
   parameter {
@@ -95,7 +86,7 @@ resource "aws_db_parameter_group" "valohai_roidb" {
 }
 
 resource "aws_iam_role" "valohai_rds_monitoring_role" {
-  name = "ValohaiRdsMonitoringRole"
+  name = "dev-valohai-iamr-rdsmonitor"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -113,12 +104,12 @@ resource "aws_iam_role" "valohai_rds_monitoring_role" {
   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"]
 
   tags = {
-    Name = "ValohaiRdsMonitoringRole"
+    Name = "dev-valohai-iamr-rdsmonitor"
   }
 }
 
 resource "aws_db_instance" "valohai_roidb" {
-  identifier = "valohai-roidb"
+  identifier = "dev-valohai-rds-roidb"
 
   engine                              = "postgres"
   engine_version                      = "14.3"
@@ -142,7 +133,7 @@ resource "aws_db_instance" "valohai_roidb" {
   password = random_password.password.result
 
   vpc_security_group_ids = [aws_security_group.valohai_roidb_sg.id]
-  db_subnet_group_name   = "valohai_roidb_subnet"
+  db_subnet_group_name   = aws_db_subnet_group.valohai_roidb_subnet.name
 
   maintenance_window = "Mon:00:00-Mon:03:00"
   backup_window      = "03:00-06:00"

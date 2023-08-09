@@ -22,7 +22,6 @@ No modules.
 | [aws_autoscaling_group.valohai_worker_asg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
 | [aws_launch_template.valohai_worker_lt](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
 | [aws_ami.valohai](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
-| [aws_security_group.valohai_sg_workers](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group) | data source |
 
 ## Inputs
 
@@ -36,11 +35,10 @@ No modules.
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id used for ELB | `string` | n/a | yes |
 | <a name="input_assign_public_ip"></a> [assign\_public\_ip](#input\_assign\_public\_ip) | Defines is workers should get a public IP | `bool` | `false` | no |
 | <a name="input_ebs_disk_size"></a> [ebs\_disk\_size](#input\_ebs\_disk\_size) | EBS disk size for Valohai instances | `string` | `"50"` | no |
-| <a name="input_instance_profile"></a> [instance\_profile](#input\_instance\_profile) | InstanceProfile to attach to Valohai Workers | `string` | `"ValohaiWorkerProfile"` | no |
+| <a name="input_instance_profile"></a> [instance\_profile](#input\_instance\_profile) | InstanceProfile to attach to Valohai Workers | `string` | `"dev-valohai-iamr-worker"` | no |
+| <a name="input_worker_sg_id"></a> [worker\_sg\_id](#input\_worker\_sg\_id) | Valohai Worker security group | `string` | `"50"` | no |
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | n/a |
+No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

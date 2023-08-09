@@ -22,6 +22,7 @@ No modules.
 | [aws_iam_instance_profile.valohai_worker_profile](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_role.valohai_worker_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.valohai_worker_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy_attachment.ssm_attach](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 
 ## Inputs
 
@@ -31,5 +32,6 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_worker_instance_profile_name"></a> [worker\_instance\_profile\_name](#output\_worker\_instance\_profile\_name) | n/a |
 | <a name="output_worker_role"></a> [worker\_role](#output\_worker\_role) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

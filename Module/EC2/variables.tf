@@ -25,14 +25,13 @@ variable "lb_target_group_id" {
 
 variable "lb_sg" {
   description = "Security Group for load balancer"
-  type        = list(string)
-}
-
-variable "bastion_sg" {
-  description = "Security Group for Bastion"
   type        = string
 }
 
+variable "s3_bucket_name" {
+  description = "Unique name for the S3 bucket that's used as the default output storage for Valohai"
+  type        = string
+}
 
 variable "ec2_key" {
   description = "Local location of the public key that should be attached to the Valohai owned EC2 instances"

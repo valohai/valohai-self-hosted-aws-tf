@@ -12,18 +12,14 @@ data "aws_ami" "valohai" {
     values = ["hvm"]
   }
 
-  owners = ["910181886844"] # Valohai Staging
-}
-
-data "aws_security_group" "valohai_sg_workers" {
-  name = "valohai-sg-workers"
+  owners = ["635691382966"] # Valohai Customer
 }
 
 resource "aws_launch_template" "valohai_worker_lt" {
-  name_prefix            = "valohai-worker-${var.instance_type}-template"
+  name_prefix            = "valohai-lt-worker-${var.instance_type}"
   image_id               = (var.ami == "") ? data.aws_ami.valohai.id : var.ami
   instance_type          = var.instance_type
-  key_name               = "valohai_${var.region}"
+  key_name               = "dev-valohai-key-valohai"
   user_data              = base64encode(templatefile("${path.module}/peon/userdata", { queue_name = "${var.region}-${var.instance_type}", redis_url = "redis://:@${var.redis_url}:6379" }))
   update_default_version = true
   ebs_optimized          = true
@@ -36,7 +32,7 @@ resource "aws_launch_template" "valohai_worker_lt" {
 
   network_interfaces {
     associate_public_ip_address = var.assign_public_ip
-    security_groups             = [data.aws_security_group.valohai_sg_workers.id]
+    security_groups             = [var.worker_sg_id]
     delete_on_termination       = true
   }
 
@@ -59,13 +55,15 @@ resource "aws_launch_template" "valohai_worker_lt" {
     resource_type = "instance"
 
     tags = {
-      "Role" = "ValohaiWorker"
+      "Role"             = "ValohaiWorker"
+      "ProvisionedUsing" = "Terraform"
+      "valohai"          = "1"
     }
   }
 }
 
 resource "aws_autoscaling_group" "valohai_worker_asg" {
-  name                      = "valohai-worker-${var.instance_type}"
+  name                      = "dev-valohai-asg-worker-${var.instance_type}"
   max_size                  = 100
   min_size                  = 0
   health_check_grace_period = 0
@@ -89,8 +87,9 @@ resource "aws_autoscaling_group" "valohai_worker_asg" {
   }
 
   tag {
-    key                 = "Role"
-    value               = "Valohai-Worker"
+    key                 = "ProvisionedUsing"
+    value               = "Terraform"
     propagate_at_launch = true
   }
+
 }

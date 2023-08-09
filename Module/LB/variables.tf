@@ -17,3 +17,8 @@ variable "certificate_arn" {
   description = "Certificate ARN"
   type        = string
 }
+
+variable "s3_logs_name" {
+  description = "Unique name for the S3 bucket that's used as the default log storage"
+  type        = string
+}

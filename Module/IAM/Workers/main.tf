@@ -1,5 +1,5 @@
 resource "aws_iam_role_policy" "valohai_worker_policy" {
-  name = "ValohaiWorkerPolicy"
+  name = "dev-valohai-iamp-worker"
   role = aws_iam_role.valohai_worker_role.name
 
   policy = jsonencode({
@@ -22,7 +22,7 @@ resource "aws_iam_role_policy" "valohai_worker_policy" {
 }
 
 resource "aws_iam_role" "valohai_worker_role" {
-  name        = "ValohaiWorkerRole"
+  name        = "dev-valohai-iamr-worker"
   description = "A Valohai role that is by default assigned to all launched EC2 instances"
 
   assume_role_policy = jsonencode({
@@ -40,6 +40,11 @@ resource "aws_iam_role" "valohai_worker_role" {
 }
 
 resource "aws_iam_instance_profile" "valohai_worker_profile" {
-  name = "ValohaiWorkerProfile"
+  name = "dev-valohai-iamri-worker"
   role = aws_iam_role.valohai_worker_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_attach" {
+  role       = aws_iam_role.valohai_worker_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
