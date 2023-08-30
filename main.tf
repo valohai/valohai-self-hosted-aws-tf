@@ -116,22 +116,3 @@ module "ASG" {
     module.IAM_Workers, module.EC2
   ]
 }
-
-module "ASG" {
-  source = "./Module/ASG"
-
-  for_each = toset(var.aws_instances_types)
-
-  vpc_id            = var.vpc_id
-  subnet_ids        = var.worker_subnet_ids
-  security_group_id = module.SecurityGroups.workers_sg.id
-  instance_type     = each.key
-  region            = var.region
-  redis_url         = module.Redis.redis_url
-  assign_public_ip  = true
-  ami               = "" # Leave empty for default
-
-  depends_on = [
-    module.SecurityGroups, module.IAM_Workers
-  ]
-}

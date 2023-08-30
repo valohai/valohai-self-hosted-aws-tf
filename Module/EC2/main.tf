@@ -81,7 +81,7 @@ data "aws_ami" "valohai" {
     values = ["hvm"]
   }
 
-  owners = ["910181886844"]
+  owners = ["635691382966"]
 }
 
 # Load public key
@@ -131,6 +131,9 @@ resource "aws_instance" "valohai_roi" {
   user_data = <<-EOF
     #!/bin/bash
 
+    set -xeuo pipefail
+    sudo apt-get update
+
     sudo systemctl stop roi
     export ROI_AUTO_MIGRATE=true
 
@@ -149,12 +152,12 @@ resource "aws_instance" "valohai_roi" {
     sed -i "s|SECRET_KEY=|SECRET_KEY=$SECRET_KEY|" /etc/roi.config
     sed -i "s|STATS_JWT_KEY=|STATS_JWT_KEY=$JWT_KEY|" /etc/roi.config
 
-    sudo systemctl start roi
-
-    sudo docker run -it --env-file=/etc/roi.config valohai/roi:latest python manage.py migrate --mode dev
+    sudo docker run -it --env-file=/etc/roi.config valohai/roi:latest python manage.py migrate
     sudo docker run -it --env-file=/etc/roi.config valohai/roi:latest python manage.py roi_init --mode dev
-
+    
+    sudo systemctl start roi
     sudo snap start amazon-ssm-agent
+    
     EOF
 }
 
