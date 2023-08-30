@@ -13,7 +13,7 @@ This repository contains a Terraform script to deploy a self hosted version of V
 Before starting deploying the Terraform template, you'll need to:
 
 * Generate an SSH key that will be used as the key for the Valohai managed EC2 instances.
-  * You can generate a key by running `ssh-keygen -m PEM -f valohai -C ubuntu` locally on your workstation.
+  * You can generate a key by running `ssh-keygen -m PEM -f .valohai-key -C ubuntu` locally on your workstation.
 * Update the `variables.tfvars` file and input your details there.
 
 To deploy the resources:
