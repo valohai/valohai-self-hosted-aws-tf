@@ -31,7 +31,7 @@ resource "aws_s3_bucket" "valohai_data" {
   #checkov:skip=CKV2_AWS_62:Ignore event notifications.
   #checkov:skip=CKV_AWS_18:Ensure the S3 bucket has access logging enabled
   bucket        = var.s3_bucket_name
-  force_destroy = true
+  force_destroy = false
 
   logging {
     target_bucket = var.s3_logs_name

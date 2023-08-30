@@ -99,12 +99,16 @@ resource "aws_security_group" "valohai_sg_lb" {
 
 ## Removing Valohai resources
 
-The Postgresql database for Valohai data has delete protection on and it won't be deleted by default.
+The Postgresql database for Valohai data and the load balancer have delete protection on and they won't be deleted by default.
 The S3 Bucket containing all won't be deleted unless you empty it fully.
 
 To delete the Postgresql database:
 * Update the `aws_db_instance` resource properties by setting `deletion_protection` to `false` in `Module/Postgres/main.tf`
 * Run `terraform plan -out="valohai-postgres-update" -var-file=variables.tfvars` && `terraform apply "valohai-postgres-update"`
+
+To delete the load balancer:
+* Update the `aws_lb` resource properties by setting `enable_deletion_protection` to `false` in `Module/LB/main.tf`
+* Run `terraform plan -out="valohai-lb-update" -var-file=variables.tfvars` && `terraform apply "valohai-lb-update"`
 
 To empty & delete the S3 Bucket:
 * Update the `aws_s3_bucket` resource properties by setting  `force_destroy` to `true` in `Module/S3/main.tf`
