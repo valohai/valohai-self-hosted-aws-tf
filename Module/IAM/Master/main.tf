@@ -108,7 +108,7 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
         "Action" : "s3:*",
         "Resource" : [
           "arn:aws:s3:::${var.s3_bucket_name}",
-          "arn:aws:s3:::${var.s3_bucket_name}"
+          "arn:aws:s3:::${var.s3_bucket_name}/*"
         ]
       },
       {
