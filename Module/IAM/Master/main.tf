@@ -196,16 +196,6 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
         "Resource" : [
           "arn:aws:ssm:*:*:session/*"
         ]
-      },
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          "kms:GenerateDataKey"
-        ],
-        "Resource" : [
-          "arn:aws:kms:eu-west-2:${var.aws_account_id}:key/2ee47c2d-1179-4808-aa56-48ce95065dff",
-          "arn:aws:kms:eu-west-2:${var.aws_account_id}:key/360825e7-5793-4834-b609-17fb568964c8",
-        ]
       }
     ]
   })
