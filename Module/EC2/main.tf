@@ -152,10 +152,10 @@ resource "aws_instance" "valohai_roi" {
     sed -i "s|SECRET_KEY=|SECRET_KEY=$SECRET_KEY|" /etc/roi.config
     sed -i "s|STATS_JWT_KEY=|STATS_JWT_KEY=$JWT_KEY|" /etc/roi.config
 
-    sudo docker run -it --env-file=/etc/roi.config valohai/roi:latest python manage.py migrate
-    sudo docker run -it --env-file=/etc/roi.config valohai/roi:latest python manage.py roi_init --mode dev
-    
-    sudo systemctl start roi
+    sudo systemctl enable roi-setup
+    sudo systemctl start roi-setup
+    sudo systemctl enable roi
+    sudo systemctl restart roi
     sudo snap start amazon-ssm-agent
     
     EOF
