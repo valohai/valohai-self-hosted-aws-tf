@@ -63,3 +63,8 @@ variable "domain" {
   description = "Address that will be used to access the service"
   type        = string
 }
+
+variable "organization" {
+  description = "Name of the organization in Valohai (e.g. MyOrg)"
+  type        = string
+}

@@ -89,6 +89,7 @@ module "EC2" {
   lb_sg              = module.LB.security_group_id
   s3_bucket_name     = var.s3_bucket_name
   environment_name   = var.environment_name
+  organization       = var.organization
   db_url             = module.Database.database_url
   db_password        = module.Database.database_password
   redis_url          = module.Redis.redis_url

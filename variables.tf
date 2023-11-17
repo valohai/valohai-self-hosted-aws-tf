@@ -67,6 +67,12 @@ variable "domain" {
   default     = "" #"http://valohai.myorg.com"
 }
 
+variable "organization" {
+  description = "Name of organization in Valohai (e.g. MyOrg)"
+  type        = string
+  default     = "MyOrg"
+}
+
 variable "certificate_arn" {
   description = "Certificate ARN"
   type        = string

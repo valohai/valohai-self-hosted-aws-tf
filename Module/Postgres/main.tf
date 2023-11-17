@@ -112,7 +112,7 @@ resource "aws_db_instance" "valohai_roidb" {
   identifier = "dev-valohai-rds-roidb"
 
   engine                              = "postgres"
-  engine_version                      = "14.3"
+  engine_version                      = "14.7"
   instance_class                      = "db.m5.large"
   allocated_storage                   = 20
   storage_encrypted                   = true
@@ -141,7 +141,7 @@ resource "aws_db_instance" "valohai_roidb" {
   backup_retention_period   = 3
   skip_final_snapshot       = true
   final_snapshot_identifier = "valohai-roidb-latest"
-  deletion_protection       = true
+  deletion_protection       = false
 
   depends_on = [
     aws_db_subnet_group.valohai_roidb_subnet

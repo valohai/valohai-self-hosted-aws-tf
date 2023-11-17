@@ -17,7 +17,8 @@ worker_subnet_ids = [
 ]
 vpc_id           = "vpc-066122736a3c21fc2"
 environment_name = "Valohai"
-s3_bucket_name   = "valohai-data-dd"
-s3_logs_name     = "valohai-data-dd-logs"
+s3_bucket_name   = "valohai-data"
+s3_logs_name     = "valohai-data-logs"
 domain           = "https://test.valohai.com"
 certificate_arn  = ""
+organization     = "TestOrg"
