@@ -1,0 +1,23 @@
+prep:
+  valohai-url: '' # e.g. http://yourdomain.com
+  valohai-token: '' # vh token
+  roi-env-mode: 'CREATE_OR_UPDATE'
+  valohai-env-owner-id: '' # vh organization ID
+aws:
+  aws-profile: 'default'
+  update-aws: false
+  asg-name-prefix: 'dev-valohai-asg-worker-' # https://github.com/valohai/valohai-self-hosted-aws-tf/blob/fc7128ecaaa7f192cdc507d712847796b44e07cb/Module/ASG/main.tf#L66
+  verify-redis: false
+  installation-type: private-worker
+  disk-size-gb: 50 # increase disk size if needed
+  region: '' # e.g. us-east-1
+  roi-redis-url: '' # starts with redis://
+  security-group-name: '' # add your security group name 
+  vpc-id: '' # add with your vpc-id
+  vpc-subnets:
+    - 'valohai-subnet-*' # replace with how your subnets are named
+  key-pair-name: '' # add your EC2 key pair name (same as for the Valohai master instance)
+  instance-types:
+    - t3.small
+    - c5.xlarge
+    - p3.2xlarge
