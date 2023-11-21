@@ -22,6 +22,7 @@ provider "aws" {
 module "IAM_Master" {
   source = "./Module/IAM/Master"
 
+  aws_region     = var.aws_region
   aws_account_id = var.aws_account_id
   s3_bucket_name = var.s3_bucket_name
 
@@ -88,6 +89,7 @@ module "EC2" {
   lb_target_group_id = module.LB.target_group_id
   lb_sg              = module.LB.security_group_id
   s3_bucket_name     = var.s3_bucket_name
+  s3_kms_key         = module.S3.kms_key
   environment_name   = var.environment_name
   organization       = var.organization
   db_url             = module.Database.database_url
