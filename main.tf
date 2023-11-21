@@ -96,6 +96,7 @@ module "EC2" {
   db_password        = module.Database.database_password
   redis_url          = module.Redis.redis_url
   domain             = var.domain
+  aws_instance_types = var.aws_instance_types
 
   depends_on = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]
 }
@@ -104,7 +105,7 @@ module "EC2" {
 module "ASG" {
   source = "./Module/ASG"
 
-  for_each = toset(var.aws_instances_types)
+  for_each = toset(var.aws_instance_types)
 
   vpc_id           = var.vpc_id
   subnet_ids       = var.worker_subnet_ids
