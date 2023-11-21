@@ -19,9 +19,10 @@ vpc_id           = "vpc-066122736a3c21fc2"
 environment_name = "Valohai"
 s3_bucket_name   = "valohai-data"
 s3_logs_name     = "valohai-data-logs"
-domain           = "https://test.valohai.com"
+domain           = "http://dev-valohai-alb-valohai-28844007.us-east-1.elb.amazonaws.com/"
 certificate_arn  = ""
 organization     = "TestOrg"
+ami_id           = "ami-012e015931dca494c" # AMI id from your Valohai contact
 aws_instance_types = [
     "t3.small",
     "c5.xlarge",

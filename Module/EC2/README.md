@@ -40,6 +40,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_ami_ida"></a> [ami_id](#input\_ami_id) | AMI id from your Valohai contact | `string` | `""` | yes |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
 | <a name="input_db_password"></a> [db\_password](#input\_db\_password) | Password for the Postgresql database | `string` | n/a | yes |
 | <a name="input_db_url"></a> [db\_url](#input\_db\_url) | Address of the Postgresql database used for Valohai | `string` | n/a | yes |
@@ -48,6 +49,7 @@ No modules.
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment / organization (e.g. MyOrg) | `string` | n/a | yes |
 | <a name="input_lb_sg"></a> [lb\_sg](#input\_lb\_sg) | Security Group for load balancer | `string` | n/a | yes |
 | <a name="input_lb_target_group_id"></a> [lb\_target\_group\_id](#input\_lb\_target\_group\_id) | ARN of the load balancer | `string` | n/a | yes |
+| <a name="input_organization"></a> [organization](#input\_organization) | Name of the organization in Valohai (e.g. MyOrg) | `string` | `"MyOrg"` | no |
 | <a name="input_redis_url"></a> [redis\_url](#input\_redis\_url) | Address of the redis (node) that will host the job queue and short term logs. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | Region | `string` | n/a | yes |
 | <a name="input_roi_subnet_id"></a> [roi\_subnet\_id](#input\_roi\_subnet\_id) | Subnet used for core Valohai web app and scaling services (Roi) | `string` | n/a | yes |

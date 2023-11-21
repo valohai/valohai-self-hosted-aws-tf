@@ -168,6 +168,7 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_ami_ida"></a> [ami_id](#input\_ami_id) | AMI id from your Valohai contact | `string` | `""` | yes |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
 | <a name="input_aws_instances_types"></a> [aws\_instances\_types](#input\_aws\_instances\_types) | List of AWS instance types that should be created | `list(string)` | <pre>[<br>  "t3.small",<br>  "t3.medium",<br>  "c5.xlarge",<br>  "c5.2xlarge",<br>  "c5.4xlarge",<br>  "r4.xlarge",<br>  "p3.2xlarge",<br>  "g5.2xlarge"<br>]</pre> | no |
 | <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | AWS profile to be used | `string` | n/a | yes |

@@ -96,6 +96,7 @@ module "EC2" {
   db_password        = module.Database.database_password
   redis_url          = module.Redis.redis_url
   domain             = var.domain
+  ami_id             = var.ami_id
   aws_instance_types = var.aws_instance_types
 
   depends_on = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]

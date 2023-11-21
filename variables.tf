@@ -79,6 +79,12 @@ variable "certificate_arn" {
   default     = "" # "arn:aws:acm:REGION:ACCOUNT:certificate/ID"
 }
 
+variable "ami_id" {
+  description = "AMI id from your Valohai contact"
+  type        = string
+  default     = ""
+}
+
 variable "aws_instance_types" {
   description = "List of AWS instance types that should be created"
   type        = list(string)

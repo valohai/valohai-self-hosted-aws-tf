@@ -68,21 +68,21 @@ resource "aws_ssm_parameter" "jwt_key" {
 }
 
 # Get the AMI for roi instance
-data "aws_ami" "valohai" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["valohai-roi-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["635691382966"]
-}
+#data "aws_ami" "valohai" {
+#  most_recent = true
+#
+#  filter {
+#    name   = "name"
+#    values = ["valohai-roi-*"]
+#  }
+#
+#  filter {
+#    name   = "virtualization-type"
+#    values = ["hvm"]
+#  }
+#
+#  owners = ["635691382966"]
+#}
 
 # Load public key
 resource "aws_key_pair" "valohai_roi_key" {
@@ -96,7 +96,7 @@ resource "aws_key_pair" "valohai_roi_key" {
 
 # Valohai roi instance
 resource "aws_instance" "valohai_roi" {
-  ami                    = data.aws_ami.valohai.id
+  ami                    = var.ami_id
   instance_type          = "m5.xlarge"
   key_name               = aws_key_pair.valohai_roi_key.id
   vpc_security_group_ids = [aws_security_group.valohai_sg_roi.id]
