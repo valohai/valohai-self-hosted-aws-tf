@@ -112,7 +112,7 @@ resource "aws_db_instance" "valohai_roidb" {
   identifier = "dev-valohai-rds-roidb"
 
   engine                              = "postgres"
-  engine_version                      = "14.3"
+  engine_version                      = "14.7"
   instance_class                      = "db.m5.large"
   allocated_storage                   = 20
   storage_encrypted                   = true

@@ -67,23 +67,30 @@ variable "domain" {
   default     = "" #"http://valohai.myorg.com"
 }
 
+variable "organization" {
+  description = "Name of organization in Valohai (e.g. MyOrg)"
+  type        = string
+  default     = "MyOrg"
+}
+
 variable "certificate_arn" {
   description = "Certificate ARN"
   type        = string
   default     = "" # "arn:aws:acm:REGION:ACCOUNT:certificate/ID"
 }
 
-variable "aws_instances_types" {
+variable "ami_id" {
+  description = "AMI id from your Valohai contact"
+  type        = string
+  default     = ""
+}
+
+variable "aws_instance_types" {
   description = "List of AWS instance types that should be created"
   type        = list(string)
   default = [
     "t3.small",
-    "t3.medium",
     "c5.xlarge",
-    "c5.2xlarge",
-    "c5.4xlarge",
-    "r4.xlarge",
-    "p3.2xlarge",
-    "g5.2xlarge"
+    "p3.2xlarge"
   ]
 }

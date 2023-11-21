@@ -118,7 +118,7 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
           "ssm:ResetServiceSetting",
           "ssm:UpdateServiceSetting"
         ],
-        "Resource" : "arn:aws:ssm:eu-west-2:${var.aws_account_id}:servicesetting/ssm/managed-instance/default-instance-management-role"
+        "Resource" : "arn:aws:ssm:${var.aws_region}:${var.aws_account_id}:servicesetting/ssm/managed-instance/default-instance-management-role"
       },
       {
         "Effect" : "Allow",
@@ -183,8 +183,8 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
           "ssm:StartSession"
         ],
         "Resource" : [
-          "arn:aws:ec2:eu-west-2:${var.aws_account_id}:instance/*",
-          "arn:aws:ssm:eu-west-2:${var.aws_account_id}:document/SSM-SessionManagerRunShell"
+          "arn:aws:ec2:${var.aws_region}:${var.aws_account_id}:instance/*",
+          "arn:aws:ssm:${var.aws_region}:${var.aws_account_id}:document/SSM-SessionManagerRunShell"
         ]
       },
       {

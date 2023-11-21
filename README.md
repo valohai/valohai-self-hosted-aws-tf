@@ -168,6 +168,7 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_ami_ida"></a> [ami_id](#input\_ami_id) | AMI id from your Valohai contact | `string` | `""` | yes |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
 | <a name="input_aws_instances_types"></a> [aws\_instances\_types](#input\_aws\_instances\_types) | List of AWS instance types that should be created | `list(string)` | <pre>[<br>  "t3.small",<br>  "t3.medium",<br>  "c5.xlarge",<br>  "c5.2xlarge",<br>  "c5.4xlarge",<br>  "r4.xlarge",<br>  "p3.2xlarge",<br>  "g5.2xlarge"<br>]</pre> | no |
 | <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | AWS profile to be used | `string` | n/a | yes |
@@ -177,6 +178,7 @@ No resources.
 | <a name="input_domain"></a> [domain](#input\_domain) | Address that will be used to access the service | `string` | `""` | no |
 | <a name="input_ec2_key"></a> [ec2\_key](#input\_ec2\_key) | Location of the ssh key pub file that can be used for Valohai managed instances | `string` | `".valohai.pub"` | no |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment / organization (e.g. MyOrg) | `string` | `"My Valohai Org"` | no |
+| <a name="input_organization"></a> [organization](#input\_organization) | Name of the organization in Valohai (e.g. MyOrg) | `string` | `"MyOrg"` | no |
 | <a name="input_lb_subnet_ids"></a> [lb\_subnet\_ids](#input\_lb\_subnet\_ids) | List of subnet IDs for load balancer | `list(string)` | n/a | yes |
 | <a name="input_roi_subnet_id"></a> [roi\_subnet\_id](#input\_roi\_subnet\_id) | ID of subnet for Roi | `string` | n/a | yes |
 | <a name="input_s3_bucket_name"></a> [s3\_bucket\_name](#input\_s3\_bucket\_name) | Unique name for the S3 bucket that's used as the default output storage for Valohai | `string` | n/a | yes |

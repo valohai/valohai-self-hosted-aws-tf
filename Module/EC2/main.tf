@@ -68,21 +68,21 @@ resource "aws_ssm_parameter" "jwt_key" {
 }
 
 # Get the AMI for roi instance
-data "aws_ami" "valohai" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["valohai-roi-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["635691382966"]
-}
+#data "aws_ami" "valohai" {
+#  most_recent = true
+#
+#  filter {
+#    name   = "name"
+#    values = ["valohai-roi-*"]
+#  }
+#
+#  filter {
+#    name   = "virtualization-type"
+#    values = ["hvm"]
+#  }
+#
+#  owners = ["635691382966"]
+#}
 
 # Load public key
 resource "aws_key_pair" "valohai_roi_key" {
@@ -96,7 +96,7 @@ resource "aws_key_pair" "valohai_roi_key" {
 
 # Valohai roi instance
 resource "aws_instance" "valohai_roi" {
-  ami                    = data.aws_ami.valohai.id
+  ami                    = var.ami_id
   instance_type          = "m5.xlarge"
   key_name               = aws_key_pair.valohai_roi_key.id
   vpc_security_group_ids = [aws_security_group.valohai_sg_roi.id]
@@ -104,6 +104,25 @@ resource "aws_instance" "valohai_roi" {
   iam_instance_profile   = "dev-valohai-iami-master"
   monitoring             = true
   ebs_optimized          = true
+  user_data              = templatefile("${path.module}/config/user_data.sh", {
+    repo_private_key     = aws_ssm_parameter.repo_private_key.name
+    secret_key           = aws_ssm_parameter.secret_key.name
+    jwt_key              = aws_ssm_parameter.jwt_key.name
+    url_base             = var.domain
+    region               = var.region
+    s3_bucket            = var.s3_bucket_name
+    s3_kms_key           = var.s3_kms_key
+    aws_account_id       = var.aws_account_id
+    redis_url            = var.redis_url
+    db_password          = var.db_password
+    db_url               = var.db_url
+    environment_name     = var.environment_name
+    module_path          = "${path.module}"
+    vpc_id               = var.vpc_id
+    organization         = var.organization
+    aws_instance_types   = indent(2,yamlencode(var.aws_instance_types))
+  })
+  user_data_replace_on_change = true
 
   metadata_options {
     http_endpoint               = "enabled"
@@ -117,48 +136,10 @@ resource "aws_instance" "valohai_roi" {
     encrypted   = true
   }
 
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    host        = aws_instance.valohai_roi.public_ip
-    private_key = file(var.roi_key)
-  }
-
   tags = {
     Name = "dev-valohai-ec2-roi",
   }
 
-  user_data = <<-EOF
-    #!/bin/bash
-
-    set -xeuo pipefail
-    sudo apt-get update
-
-    sudo systemctl stop roi
-    export ROI_AUTO_MIGRATE=true
-
-    export REPO_PRIVATE_KEY=`aws ssm get-parameter --name ${aws_ssm_parameter.repo_private_key.name} --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
-    export SECRET_KEY=`aws ssm get-parameter --name ${aws_ssm_parameter.secret_key.name} --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
-    export JWT_KEY=`aws ssm get-parameter --name ${aws_ssm_parameter.jwt_key.name} --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
-
-    sed -i "s|URL_BASE=|URL_BASE=${var.domain}|" /etc/roi.config
-    sed -i "s|AWS_REGION=|AWS_REGION=${var.region}|" /etc/roi.config
-    sed -i "s|AWS_S3_BUCKET_NAME=|AWS_S3_BUCKET_NAME=${var.s3_bucket_name}|" /etc/roi.config
-    sed -i "s|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-multipart|" /etc/roi.config
-    sed -i "s|CELERY_BROKER=|CELERY_BROKER=redis://${var.redis_url}:6379|" /etc/roi.config
-    sed -i "s|DATABASE_URL=|DATABASE_URL=psql://roi:${var.db_password}@${var.db_url}:5432/valohairoidb|" /etc/roi.config
-    sed -i "s|PLATFORM_LONG_NAME=|PLATFORM_LONG_NAME=${var.environment_name}|" /etc/roi.config
-    sed -i "s|REPO_PRIVATE_KEY_SECRET=|REPO_PRIVATE_KEY_SECRET=$REPO_PRIVATE_KEY|" /etc/roi.config
-    sed -i "s|SECRET_KEY=|SECRET_KEY=$SECRET_KEY|" /etc/roi.config
-    sed -i "s|STATS_JWT_KEY=|STATS_JWT_KEY=$JWT_KEY|" /etc/roi.config
-
-    sudo systemctl enable roi-setup
-    sudo systemctl start roi-setup
-    sudo systemctl enable roi
-    sudo systemctl restart roi
-    sudo snap start amazon-ssm-agent
-    
-    EOF
 }
 
 resource "aws_security_group" "valohai_sg_roi" {

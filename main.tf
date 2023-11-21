@@ -22,6 +22,7 @@ provider "aws" {
 module "IAM_Master" {
   source = "./Module/IAM/Master"
 
+  aws_region     = var.aws_region
   aws_account_id = var.aws_account_id
   s3_bucket_name = var.s3_bucket_name
 
@@ -88,11 +89,15 @@ module "EC2" {
   lb_target_group_id = module.LB.target_group_id
   lb_sg              = module.LB.security_group_id
   s3_bucket_name     = var.s3_bucket_name
+  s3_kms_key         = module.S3.kms_key
   environment_name   = var.environment_name
+  organization       = var.organization
   db_url             = module.Database.database_url
   db_password        = module.Database.database_password
   redis_url          = module.Redis.redis_url
   domain             = var.domain
+  ami_id             = var.ami_id
+  aws_instance_types = var.aws_instance_types
 
   depends_on = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]
 }
@@ -101,7 +106,7 @@ module "EC2" {
 module "ASG" {
   source = "./Module/ASG"
 
-  for_each = toset(var.aws_instances_types)
+  for_each = toset(var.aws_instance_types)
 
   vpc_id           = var.vpc_id
   subnet_ids       = var.worker_subnet_ids

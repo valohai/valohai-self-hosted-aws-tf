@@ -33,6 +33,11 @@ variable "s3_bucket_name" {
   type        = string
 }
 
+variable "s3_kms_key" {
+  description = "ARN of the created S3 bucket"
+  type        = string
+}
+
 variable "ec2_key" {
   description = "Local location of the public key that should be attached to the Valohai owned EC2 instances"
   type        = string
@@ -62,4 +67,19 @@ variable "environment_name" {
 variable "domain" {
   description = "Address that will be used to access the service"
   type        = string
+}
+
+variable "organization" {
+  description = "Name of the organization in Valohai (e.g. MyOrg)"
+  type        = string
+}
+
+variable "ami_id" {
+  description = "AMI id from your Valohai contact"
+  type        = string
+}
+
+variable "aws_instance_types" {
+  description = "A list of AWS instance types that should be created"
+  type        = list(string)
 }
