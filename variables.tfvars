@@ -22,3 +22,8 @@ s3_logs_name     = "valohai-data-logs"
 domain           = "https://test.valohai.com"
 certificate_arn  = ""
 organization     = "TestOrg"
+aws_instance_types = [
+    "t3.small",
+    "c5.xlarge",
+    "p3.2xlarge"
+]

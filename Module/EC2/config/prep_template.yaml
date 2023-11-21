@@ -18,6 +18,3 @@ aws:
     - 'valohai-subnet-*' # replace with how your subnets are named
   key-pair-name: '' # add your EC2 key pair name (same as for the Valohai master instance)
   instance-types:
-    - t3.small
-    - c5.xlarge
-    - p3.2xlarge

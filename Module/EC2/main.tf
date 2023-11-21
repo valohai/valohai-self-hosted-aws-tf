@@ -111,6 +111,7 @@ resource "aws_instance" "valohai_roi" {
     url_base             = var.domain
     region               = var.region
     s3_bucket            = var.s3_bucket_name
+    s3_kms_key           = var.s3_kms_key
     aws_account_id       = var.aws_account_id
     redis_url            = var.redis_url
     db_password          = var.db_password
@@ -119,6 +120,7 @@ resource "aws_instance" "valohai_roi" {
     module_path          = "${path.module}"
     vpc_id               = var.vpc_id
     organization         = var.organization
+    aws_instance_types   = indent(2,yamlencode(var.aws_instance_types))
   })
   user_data_replace_on_change = true
 
