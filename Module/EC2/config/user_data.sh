@@ -44,6 +44,7 @@ sed -i "s|security-group-name: ''|security-group-name: 'dev-valohai-sg-workers'|
 sed -i "s|vpc-id: ''|vpc-id: '${vpc_id}'|" /home/ubuntu/prep_template.yaml
 sed -i "s|key-pair-name: ''|key-pair-name: 'dev-valohai-key-valohai'|" /home/ubuntu/prep_template.yaml
 echo "  ${aws_instance_types}" >> /home/ubuntu/prep_template.yaml
+echo "  ${aws_spot_instance_types}" >> /home/ubuntu/prep_template.yaml
 
 set +xeuo pipefail
 sudo docker exec roi.service python manage.py shell -c "from roi.models import Organization, User;import os;org = Organization.objects.create_user(username='${organization}', email='foo@example.org', is_organization=True)"

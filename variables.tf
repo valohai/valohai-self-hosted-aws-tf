@@ -94,3 +94,15 @@ variable "aws_instance_types" {
     "p3.2xlarge"
   ]
 }
+
+variable "add_spot_instances" {
+  description = "Set to true when adding spot instances."
+  type        = bool
+  default     = false
+}
+
+variable "aws_spot_instance_types" {
+  description = "List of AWS spot instance types that should be created"
+  type        = list(string)
+  default     = []
+}

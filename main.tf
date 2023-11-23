@@ -98,7 +98,8 @@ module "EC2" {
   domain             = var.domain
   ami_id             = var.ami_id
   aws_instance_types = var.aws_instance_types
-
+  aws_spot_instance_types = var.aws_spot_instance_types
+  add_spot_instances = var.add_spot_instances
   depends_on = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]
 }
 
@@ -107,6 +108,26 @@ module "ASG" {
   source = "./Module/ASG"
 
   for_each = toset(var.aws_instance_types)
+
+  vpc_id           = var.vpc_id
+  subnet_ids       = var.worker_subnet_ids
+  instance_type    = each.key
+  region           = var.aws_region
+  redis_url        = module.Redis.redis_url
+  ami              = "" # Leave empty for default
+  worker_sg_id     = module.EC2.worker_security_group_id
+  instance_profile = module.IAM_Workers.worker_instance_profile_name
+
+  depends_on = [
+    module.IAM_Workers, module.EC2
+  ]
+}
+
+module "ASG-spots" {
+  #count  = var.add_spot_instances ? toset(var.aws_spot_instance_types) : 0
+  source = "./Module/ASG-spots"
+
+  for_each = var.add_spot_instances ? toset(var.aws_spot_instance_types) : []
 
   vpc_id           = var.vpc_id
   subnet_ids       = var.worker_subnet_ids

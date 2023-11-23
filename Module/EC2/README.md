@@ -40,8 +40,11 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ami_ida"></a> [ami_id](#input\_ami_id) | AMI id from your Valohai contact | `string` | `""` | yes |
+| <a name="input_add_spot_instances"></a> [add_spot_instances](#input\_add\_spot\_instances) | Set to true when adding spot instances | `bool` | `false` | yes |
+| <a name="input_ami_id"></a> [ami_id](#input\_ami\_id) | AMI id from your Valohai contact | `string` | `""` | yes |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
+| <a name="input_aws_instance_types"></a> [aws\_instance\_types](#input\_aws\_instance\_types) | List of AWS instance types that should be created | `list(string)` | <pre>[<br>  "t3.small",<br>  "c5.2xlarge", <br>  "p3.2xlarge"<br>]</pre> | no |
+| <a name="input_aws_spot_instance_types"></a> [aws\_spot\_instance\_types](#input\_aws\_spot\_instance\_types) | List of AWS spot instance types that should be created | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_db_password"></a> [db\_password](#input\_db\_password) | Password for the Postgresql database | `string` | n/a | yes |
 | <a name="input_db_url"></a> [db\_url](#input\_db\_url) | Address of the Postgresql database used for Valohai | `string` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | Address that will be used to access the service | `string` | n/a | yes |

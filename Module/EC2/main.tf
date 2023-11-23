@@ -121,6 +121,7 @@ resource "aws_instance" "valohai_roi" {
     vpc_id               = var.vpc_id
     organization         = var.organization
     aws_instance_types   = indent(2,yamlencode(var.aws_instance_types))
+    aws_spot_instance_types   = var.add_spot_instances ? indent(2,yamlencode(formatlist("%s.spot", var.aws_spot_instance_types))) : ""
   })
   user_data_replace_on_change = true
 

@@ -168,11 +168,13 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ami_ida"></a> [ami_id](#input\_ami_id) | AMI id from your Valohai contact | `string` | `""` | yes |
+| <a name="input_add_spot_instances"></a> [add_spot_instances](#input\_add\_spot\_instances) | Set to true when adding spot instances | `bool` | `false` | yes |
+| <a name="input_ami_id"></a> [ami_id](#input\_ami\_id) | AMI id from your Valohai contact | `string` | `""` | yes |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
-| <a name="input_aws_instances_types"></a> [aws\_instances\_types](#input\_aws\_instances\_types) | List of AWS instance types that should be created | `list(string)` | <pre>[<br>  "t3.small",<br>  "t3.medium",<br>  "c5.xlarge",<br>  "c5.2xlarge",<br>  "c5.4xlarge",<br>  "r4.xlarge",<br>  "p3.2xlarge",<br>  "g5.2xlarge"<br>]</pre> | no |
+| <a name="input_aws_instance_types"></a> [aws\_instance\_types](#input\_aws\_instance\_types) | List of AWS instance types that should be created | `list(string)` | <pre>[<br>  "t3.small",<br>  "c5.2xlarge", <br>  "p3.2xlarge"<br>]</pre> | no |
 | <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | AWS profile to be used | `string` | n/a | yes |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region for Valohai resources | `string` | `"us-east-1"` | no |
+| <a name="input_aws_spot_instance_types"></a> [aws\_spot\_instance\_types](#input\_aws\_spot\_instance\_types) | List of AWS spot instance types that should be created | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | Certificate ARN | `string` | `""` | no |
 | <a name="input_db_subnet_ids"></a> [db\_subnet\_ids](#input\_db\_subnet\_ids) | ID of subnet for db | `list(string)` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | Address that will be used to access the service | `string` | `""` | no |
