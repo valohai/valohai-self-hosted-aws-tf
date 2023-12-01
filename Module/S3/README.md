@@ -39,5 +39,7 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_kms_key"></a> [kms\_key](#output\_kms\_key) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

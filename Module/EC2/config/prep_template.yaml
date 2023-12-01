@@ -12,7 +12,7 @@ aws:
   disk-size-gb: 50 # increase disk size if needed
   region: '' # e.g. us-east-1
   roi-redis-url: '' # starts with redis://
-  security-group-name: '' # add your security group name 
+  security-group-name: '' # add your security group name
   vpc-id: '' # add with your vpc-id
   vpc-subnets:
     - 'valohai-subnet-*' # replace with how your subnets are named
