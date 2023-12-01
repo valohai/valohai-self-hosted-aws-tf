@@ -67,23 +67,6 @@ resource "aws_ssm_parameter" "jwt_key" {
   key_id      = aws_kms_key.valohai_kms_key.id
 }
 
-# Get the AMI for roi instance
-#data "aws_ami" "valohai" {
-#  most_recent = true
-#
-#  filter {
-#    name   = "name"
-#    values = ["valohai-roi-*"]
-#  }
-#
-#  filter {
-#    name   = "virtualization-type"
-#    values = ["hvm"]
-#  }
-#
-#  owners = ["635691382966"]
-#}
-
 # Load public key
 resource "aws_key_pair" "valohai_roi_key" {
   key_name   = "dev-valohai-key-valohai"
@@ -104,24 +87,24 @@ resource "aws_instance" "valohai_roi" {
   iam_instance_profile   = "dev-valohai-iami-master"
   monitoring             = true
   ebs_optimized          = true
-  user_data              = templatefile("${path.module}/config/user_data.sh", {
-    repo_private_key     = aws_ssm_parameter.repo_private_key.name
-    secret_key           = aws_ssm_parameter.secret_key.name
-    jwt_key              = aws_ssm_parameter.jwt_key.name
-    url_base             = var.domain
-    region               = var.region
-    s3_bucket            = var.s3_bucket_name
-    s3_kms_key           = var.s3_kms_key
-    aws_account_id       = var.aws_account_id
-    redis_url            = var.redis_url
-    db_password          = var.db_password
-    db_url               = var.db_url
-    environment_name     = var.environment_name
-    module_path          = "${path.module}"
-    vpc_id               = var.vpc_id
-    organization         = var.organization
-    aws_instance_types   = indent(2,yamlencode(var.aws_instance_types))
-    aws_spot_instance_types   = var.add_spot_instances ? indent(2,yamlencode(formatlist("%s.spot", var.aws_spot_instance_types))) : ""
+  user_data = templatefile("${path.module}/config/user_data.sh", {
+    repo_private_key        = aws_ssm_parameter.repo_private_key.name
+    secret_key              = aws_ssm_parameter.secret_key.name
+    jwt_key                 = aws_ssm_parameter.jwt_key.name
+    url_base                = var.domain
+    region                  = var.region
+    s3_bucket               = var.s3_bucket_name
+    s3_kms_key              = var.s3_kms_key
+    aws_account_id          = var.aws_account_id
+    redis_url               = var.redis_url
+    db_password             = var.db_password
+    db_url                  = var.db_url
+    environment_name        = var.environment_name
+    module_path             = path.module
+    vpc_id                  = var.vpc_id
+    organization            = var.organization
+    aws_instance_types      = indent(2, yamlencode(var.aws_instance_types))
+    aws_spot_instance_types = var.add_spot_instances ? indent(2, yamlencode(formatlist("%s.spot", var.aws_spot_instance_types))) : ""
   })
   user_data_replace_on_change = true
 

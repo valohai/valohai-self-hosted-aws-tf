@@ -33,18 +33,17 @@ No modules.
 | [random_password.jwt_key](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_password.repo_private_key](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_password.secret_key](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
-| [aws_ami.valohai](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_add_spot_instances"></a> [add_spot_instances](#input\_add\_spot\_instances) | Set to true when adding spot instances | `bool` | `false` | yes |
-| <a name="input_ami_id"></a> [ami_id](#input\_ami\_id) | AMI id from your Valohai contact | `string` | `""` | yes |
+| <a name="input_add_spot_instances"></a> [add\_spot\_instances](#input\_add\_spot\_instances) | Set to true when adding spot instances. | `bool` | n/a | yes |
+| <a name="input_ami_id"></a> [ami\_id](#input\_ami\_id) | AMI id from your Valohai contact | `string` | n/a | yes |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
-| <a name="input_aws_instance_types"></a> [aws\_instance\_types](#input\_aws\_instance\_types) | List of AWS instance types that should be created | `list(string)` | <pre>[<br>  "t3.small",<br>  "c5.2xlarge", <br>  "p3.2xlarge"<br>]</pre> | no |
-| <a name="input_aws_spot_instance_types"></a> [aws\_spot\_instance\_types](#input\_aws\_spot\_instance\_types) | List of AWS spot instance types that should be created | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
+| <a name="input_aws_instance_types"></a> [aws\_instance\_types](#input\_aws\_instance\_types) | A list of AWS instance types that should be created | `list(string)` | n/a | yes |
+| <a name="input_aws_spot_instance_types"></a> [aws\_spot\_instance\_types](#input\_aws\_spot\_instance\_types) | A list of AWS spot instance types that should be created | `list(string)` | n/a | yes |
 | <a name="input_db_password"></a> [db\_password](#input\_db\_password) | Password for the Postgresql database | `string` | n/a | yes |
 | <a name="input_db_url"></a> [db\_url](#input\_db\_url) | Address of the Postgresql database used for Valohai | `string` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | Address that will be used to access the service | `string` | n/a | yes |
@@ -52,11 +51,12 @@ No modules.
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment / organization (e.g. MyOrg) | `string` | n/a | yes |
 | <a name="input_lb_sg"></a> [lb\_sg](#input\_lb\_sg) | Security Group for load balancer | `string` | n/a | yes |
 | <a name="input_lb_target_group_id"></a> [lb\_target\_group\_id](#input\_lb\_target\_group\_id) | ARN of the load balancer | `string` | n/a | yes |
-| <a name="input_organization"></a> [organization](#input\_organization) | Name of the organization in Valohai (e.g. MyOrg) | `string` | `"MyOrg"` | no |
+| <a name="input_organization"></a> [organization](#input\_organization) | Name of the organization in Valohai (e.g. MyOrg) | `string` | n/a | yes |
 | <a name="input_redis_url"></a> [redis\_url](#input\_redis\_url) | Address of the redis (node) that will host the job queue and short term logs. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | Region | `string` | n/a | yes |
 | <a name="input_roi_subnet_id"></a> [roi\_subnet\_id](#input\_roi\_subnet\_id) | Subnet used for core Valohai web app and scaling services (Roi) | `string` | n/a | yes |
 | <a name="input_s3_bucket_name"></a> [s3\_bucket\_name](#input\_s3\_bucket\_name) | Unique name for the S3 bucket that's used as the default output storage for Valohai | `string` | n/a | yes |
+| <a name="input_s3_kms_key"></a> [s3\_kms\_key](#input\_s3\_kms\_key) | ARN of the created S3 bucket | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id used for ELB | `string` | n/a | yes |
 
 ## Outputs

@@ -63,6 +63,7 @@ resource "aws_launch_template" "valohai_worker_lt" {
 }
 
 resource "aws_autoscaling_group" "valohai_worker_asg" {
+  #checkov:skip=CKV_AWS_315:ASG using launch template (inside spot instance mixedpolicy)
   name                      = "dev-valohai-asg-worker-${var.instance_type}-spot"
   max_size                  = 100
   min_size                  = 0
@@ -85,8 +86,8 @@ resource "aws_autoscaling_group" "valohai_worker_asg" {
 
     launch_template {
       launch_template_specification {
-        launch_template_id      = aws_launch_template.valohai_worker_lt.id
-        version = "$Latest"
+        launch_template_id = aws_launch_template.valohai_worker_lt.id
+        version            = "$Latest"
       }
     }
   }

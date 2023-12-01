@@ -80,27 +80,27 @@ module "LB" {
 }
 
 module "EC2" {
-  source             = "./Module/EC2"
-  aws_account_id     = var.aws_account_id
-  ec2_key            = var.ec2_key
-  region             = var.aws_region
-  vpc_id             = var.vpc_id
-  roi_subnet_id      = var.roi_subnet_id
-  lb_target_group_id = module.LB.target_group_id
-  lb_sg              = module.LB.security_group_id
-  s3_bucket_name     = var.s3_bucket_name
-  s3_kms_key         = module.S3.kms_key
-  environment_name   = var.environment_name
-  organization       = var.organization
-  db_url             = module.Database.database_url
-  db_password        = module.Database.database_password
-  redis_url          = module.Redis.redis_url
-  domain             = var.domain
-  ami_id             = var.ami_id
-  aws_instance_types = var.aws_instance_types
+  source                  = "./Module/EC2"
+  aws_account_id          = var.aws_account_id
+  ec2_key                 = var.ec2_key
+  region                  = var.aws_region
+  vpc_id                  = var.vpc_id
+  roi_subnet_id           = var.roi_subnet_id
+  lb_target_group_id      = module.LB.target_group_id
+  lb_sg                   = module.LB.security_group_id
+  s3_bucket_name          = var.s3_bucket_name
+  s3_kms_key              = module.S3.kms_key
+  environment_name        = var.environment_name
+  organization            = var.organization
+  db_url                  = module.Database.database_url
+  db_password             = module.Database.database_password
+  redis_url               = module.Redis.redis_url
+  domain                  = var.domain
+  ami_id                  = var.ami_id
+  aws_instance_types      = var.aws_instance_types
   aws_spot_instance_types = var.aws_spot_instance_types
-  add_spot_instances = var.add_spot_instances
-  depends_on = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]
+  add_spot_instances      = var.add_spot_instances
+  depends_on              = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]
 }
 
 
@@ -124,7 +124,6 @@ module "ASG" {
 }
 
 module "ASG-spots" {
-  #count  = var.add_spot_instances ? toset(var.aws_spot_instance_types) : 0
   source = "./Module/ASG-spots"
 
   for_each = var.add_spot_instances ? toset(var.aws_spot_instance_types) : []
