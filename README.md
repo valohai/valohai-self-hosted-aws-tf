@@ -144,7 +144,9 @@ terraform-docs markdown table --output-file README.md --output-mode inject .
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.26.0 |
 
 ## Modules
 
@@ -163,7 +165,9 @@ No providers.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_dynamodb_table.dynamodb-terraform-state-lock](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table) | resource |
 
 ## Inputs
 
