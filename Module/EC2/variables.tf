@@ -93,3 +93,8 @@ variable "aws_spot_instance_types" {
   description = "A list of AWS spot instance types that should be created"
   type        = list(string)
 }
+
+variable "OPTIMO_BASIC_AUTH_PASSWORD" {
+  description = "Basic Auth password for Optimo"
+  type        = string
+}

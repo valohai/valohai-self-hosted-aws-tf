@@ -106,3 +106,8 @@ variable "aws_spot_instance_types" {
   type        = list(string)
   default     = []
 }
+
+variable "OPTIMO_BASIC_AUTH_PASSWORD" {
+  description = "Basic Auth password for Optimo"
+  type        = string
+}
