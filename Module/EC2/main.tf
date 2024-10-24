@@ -105,7 +105,6 @@ resource "aws_instance" "valohai_roi" {
     organization            = var.organization
     aws_instance_types      = indent(2, yamlencode(var.aws_instance_types))
     aws_spot_instance_types = var.add_spot_instances ? indent(2, yamlencode(formatlist("%s.spot", var.aws_spot_instance_types))) : ""
-    OPTIMO_BASIC_AUTH_PASSWORD = var.OPTIMO_BASIC_AUTH_PASSWORD
   })
   user_data_replace_on_change = true
 

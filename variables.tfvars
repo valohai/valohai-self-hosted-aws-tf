@@ -31,4 +31,3 @@ aws_instance_types = [
 ]
 add_spot_instances      = false
 aws_spot_instance_types = []
-OPTIMO_BASIC_AUTH_PASSWORD = ""

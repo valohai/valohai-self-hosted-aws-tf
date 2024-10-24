@@ -14,7 +14,7 @@ export SECRET_KEY=`aws ssm get-parameter --name ${secret_key} --with-decryption 
 export JWT_KEY=`aws ssm get-parameter --name ${jwt_key} --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
 
 sed -i "s|URL_BASE=|URL_BASE=${url_base}|" /etc/roi.config
-sed -i "s|REGION=|AWS_REGION=${region}|" /etc/roi.config
+sed -i "s|AWS_REGION=|AWS_REGION=${region}|" /etc/roi.config
 sed -i "s|AWS_S3_BUCKET_NAME=|AWS_S3_BUCKET_NAME=${s3_bucket}|" /etc/roi.config
 sed -i "s|AWS_S3_KMS_KEY_ARN=|AWS_S3_KMS_KEY_ARN=${s3_kms_key}|" /etc/roi.config
 sed -i "s|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=arn:aws:iam::${aws_account_id}:role/dev-valohai-iamr-multipart|" /etc/roi.config
@@ -49,7 +49,7 @@ else
     echo "The Optimo service is running at: http://$OPTIMO_ROOT_URL:80/"
 fi
 
-sed -i "s|OPTIMO_BASIC_AUTH_PASSWORD=|OPTIMO_BASIC_AUTH_PASSWORD=${OPTIMO_BASIC_AUTH_PASSWORD}|" /etc/roi.config
+sed -i "s|OPTIMO_BASIC_AUTH_PASSWORD=|OPTIMO_BASIC_AUTH_PASSWORD=$OPTIMO_BASIC_AUTH_PASSWORD|" /etc/roi.config
 
 sudo systemctl enable roi-setup
 sudo systemctl start roi-setup

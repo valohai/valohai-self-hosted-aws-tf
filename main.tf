@@ -100,7 +100,6 @@ module "EC2" {
   aws_instance_types      = var.aws_instance_types
   aws_spot_instance_types = var.aws_spot_instance_types
   add_spot_instances      = var.add_spot_instances
-  OPTIMO_BASIC_AUTH_PASSWORD = var.OPTIMO_BASIC_AUTH_PASSWORD
   depends_on              = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]
 }
 
