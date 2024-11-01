@@ -25,8 +25,8 @@ sed -i "s|REPO_PRIVATE_KEY_SECRET=|REPO_PRIVATE_KEY_SECRET=$REPO_PRIVATE_KEY|" /
 sed -i "s|SECRET_KEY=|SECRET_KEY=$SECRET_KEY|" /etc/roi.config
 sed -i "s|STATS_JWT_KEY=|STATS_JWT_KEY=$JWT_KEY|" /etc/roi.config
 
-docker pull valohai/optimo:20231130
-echo "Waiting for Docker image to be pulled..."
+#docker pull valohai/optimo:20231130
+#echo "Waiting for Docker image to be pulled..."
 
 echo "Starting the Optimo service"
 sudo systemctl start optimo
