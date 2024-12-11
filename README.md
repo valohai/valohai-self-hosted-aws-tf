@@ -117,6 +117,12 @@ To empty & delete the S3 Bucket:
 You can then delete all the resources with:
 * Run `terraform destroy -var-file=variables.tfvars`
 
+## Terraform state
+
+By default the Terraform state is stored in a DynamoDB table in an S3 bucket. This setup is defined in the `backend.tf` and `dynamo.tf` files. You will need to update the correct S3 bucket name and the region to the `backend.tf` file. Note that AWS IAM user defined in the `variables.tfvars` needs to have the permissions listed in [the Terraform documentation for the S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3#permissions-required).
+
+If you prefer storing the sate locally you can remove these files.
+
 ## Development
 
 Enforce Terraform styling guides with `terraform fmt -recursive`
@@ -144,7 +150,9 @@ terraform-docs markdown table --output-file README.md --output-mode inject .
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.26.0 |
 
 ## Modules
 
@@ -163,7 +171,9 @@ No providers.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_dynamodb_table.dynamodb-terraform-state-lock](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table) | resource |
 
 ## Inputs
 
