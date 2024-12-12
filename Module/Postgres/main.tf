@@ -34,7 +34,7 @@ resource "aws_kms_key" "valohai_db_kms_key" {
 
 resource "aws_kms_alias" "valohai_kms_alias" {
   target_key_id = aws_kms_key.valohai_db_kms_key.key_id
-  name          = "alias/dev-valohai-kmsa-valohaidb"
+  name          = "alias/dev-valohai-jordan-kmsa-valohaidb"
 }
 
 resource "random_password" "password" {
