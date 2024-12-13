@@ -1,0 +1,18 @@
+[Unit]
+Description=Optimo Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStartPre=-/usr/bin/docker stop %n
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStop=-/usr/bin/docker stop %n
+ExecStart=/usr/bin/docker run \
+    --name=%n \
+    -e OPTIMO_BASIC_AUTH_PASSWORD= \
+    valohai/optimo:20231130
+
+
+[Install]
+WantedBy=multi-user.target
