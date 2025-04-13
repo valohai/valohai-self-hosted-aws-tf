@@ -6,6 +6,9 @@ sudo apt-get update
 sudo systemctl stop roi
 export ROI_AUTO_MIGRATE=true
 
+sudo systemctl start docker-network-vhnet
+sudo systemctl enable docker-network-vhnet
+
 echo "${file("${module_path}/config/roi.config")}" > /etc/roi.config
 
 export REPO_PRIVATE_KEY=`aws ssm get-parameter --name ${repo_private_key} --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
@@ -24,9 +27,8 @@ sed -i "s|REPO_PRIVATE_KEY_SECRET=|REPO_PRIVATE_KEY_SECRET=$REPO_PRIVATE_KEY|" /
 sed -i "s|SECRET_KEY=|SECRET_KEY=$SECRET_KEY|" /etc/roi.config
 sed -i "s|STATS_JWT_KEY=|STATS_JWT_KEY=$JWT_KEY|" /etc/roi.config
 
-# Setup Optimo for Bayesian optimization
-echo "${file("${module_path}/config/optimo.service")}" > /etc/systemd/system/optimo.service
 
+# Setup Optimo for Bayesian optimization
 OPTIMO_BASIC_AUTH_PASSWORD=$(echo $RANDOM | md5sum | cut -d' ' -f1)
 sed -i "s|OPTIMO_BASIC_AUTH_PASSWORD=|OPTIMO_BASIC_AUTH_PASSWORD=$OPTIMO_BASIC_AUTH_PASSWORD|" /etc/roi.config
 sed -i "s|OPTIMO_BASIC_AUTH_PASSWORD=|OPTIMO_BASIC_AUTH_PASSWORD=$OPTIMO_BASIC_AUTH_PASSWORD|" /etc/systemd/system/optimo.service
@@ -40,7 +42,7 @@ sudo systemctl enable roi
 
 # Get the Optimo container IP for /etc/sroi.config
 OPTIMO_ROOT_URL=$(sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' optimo.service)
-sed -i "s|OPTIMO_ROOT_URL=|OPTIMO_ROOT_URL=http://$OPTIMO_ROOT_URL:80/|" /etc/roi.config
+sed -i "s|OPTIMO_ROOT_URL=|OPTIMO_ROOT_URL=http://optimo.service:80/|" /etc/roi.config
 
 sudo systemctl restart roi
 sudo snap start amazon-ssm-agent
