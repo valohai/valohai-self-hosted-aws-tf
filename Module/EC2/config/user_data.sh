@@ -65,8 +65,8 @@ echo "  ${aws_instance_types}" >> /home/ubuntu/prep_template.yaml
 echo "  ${aws_spot_instance_types}" >> /home/ubuntu/prep_template.yaml
 
 set +xeuo pipefail
-sudo docker exec roi.service python manage.py shell -c "from roi.models import Organization, User;import os;org = Organization.objects.create_user(username='${organization}', email='foo@example.org', is_organization=True)"
-export ORG_ID=$(sudo docker exec roi.service python manage.py shell -c "from roi.models import Organization, User;org = User.objects.get(username='${organization}');print(str(org.id))")
+sudo docker exec roi.service python manage.py roi_create_organization --name=${organization} --for-superuser --skip-checks
+export ORG_ID=$(sudo docker exec roi.service python manage.py shell --no-imports -c "from roi.models import Organization, User;org = User.objects.get(username='${organization}');print(str(org.id))")
 sed -i "s|valohai-env-owner-id: ''|valohai-env-owner-id: '$ORG_ID'|" /home/ubuntu/prep_template.yaml
 
 su ubuntu -c "python3 -m prep --config-yaml /home/ubuntu/prep_template.yaml aws"
