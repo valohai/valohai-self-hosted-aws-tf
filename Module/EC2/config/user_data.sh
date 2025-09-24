@@ -20,7 +20,7 @@ sed -i "s|AWS_REGION=|AWS_REGION=${region}|" /etc/roi.config
 sed -i "s|AWS_S3_BUCKET_NAME=|AWS_S3_BUCKET_NAME=${s3_bucket}|" /etc/roi.config
 sed -i "s|AWS_S3_KMS_KEY_ARN=|AWS_S3_KMS_KEY_ARN=${s3_kms_key}|" /etc/roi.config
 sed -i "s|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=arn:aws:iam::${aws_account_id}:role/dev-valohai-iamr-multipart|" /etc/roi.config
-sed -i "s|CELERY_BROKER=|CELERY_BROKER=redis://${redis_url}:6379|" /etc/roi.config
+sed -i "s|DEPLOY_REDIS_URL=|DEPLOY_REDIS_URL=redis://${redis_url}:6379|" /etc/roi.config
 sed -i "s|DATABASE_URL=|DATABASE_URL=psql://roi:${db_password}@${db_url}:5432/valohairoidb|" /etc/roi.config
 sed -i "s|PLATFORM_LONG_NAME=|PLATFORM_LONG_NAME=${environment_name}|" /etc/roi.config
 sed -i "s|REPO_PRIVATE_KEY_SECRET=|REPO_PRIVATE_KEY_SECRET=$REPO_PRIVATE_KEY|" /etc/roi.config
