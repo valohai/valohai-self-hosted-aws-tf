@@ -105,6 +105,8 @@ resource "aws_instance" "valohai_roi" {
     organization            = var.organization
     aws_instance_types      = indent(2, yamlencode(var.aws_instance_types))
     aws_spot_instance_types = var.add_spot_instances ? indent(2, yamlencode(formatlist("%s.spot", var.aws_spot_instance_types))) : ""
+    enable_notebooks        = var.enable_notebooks
+    notebook_image          = var.notebook_image
   })
   user_data_replace_on_change = true
 
@@ -132,7 +134,7 @@ resource "aws_security_group" "valohai_sg_roi" {
 
   vpc_id = var.vpc_id
 
-  ingress {
+  /*   ingress {
     description     = "for ELB Access "
     from_port       = 8000
     to_port         = 8000
@@ -146,12 +148,43 @@ resource "aws_security_group" "valohai_sg_roi" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-  }
+  } */
 
   tags = {
     Name = "dev-valohai-sg-roi",
   }
 }
+
+resource "aws_security_group_rule" "allow_lb_ingress" {
+  type                     = "ingress"
+  from_port                = 8000
+  to_port                  = 8000
+  protocol                 = "tcp"
+  description              = "For ELB"
+  source_security_group_id = var.lb_sg
+  security_group_id        = aws_security_group.valohai_sg_roi.id
+}
+
+resource "aws_security_group_rule" "allow_workers_ingress" {
+  type                     = "ingress"
+  from_port                = 8000
+  to_port                  = 8000
+  protocol                 = "tcp"
+  description              = "For workers"
+  source_security_group_id = aws_security_group.valohai_sg_workers.id
+  security_group_id        = aws_security_group.valohai_sg_roi.id
+}
+
+resource "aws_security_group_rule" "allow_outbound" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  description       = "Allow outbound access"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.valohai_sg_roi.id
+}
+
 
 resource "aws_lb_target_group_attachment" "valohai_roi" {
   target_group_arn = var.lb_target_group_id

@@ -27,6 +27,9 @@ No modules.
 | [aws_lb_target_group_attachment.valohai_roi](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group_attachment) | resource |
 | [aws_security_group.valohai_sg_roi](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.valohai_sg_workers](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group_rule.allow_lb_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.allow_outbound](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.allow_workers_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_ssm_parameter.jwt_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.repo_private_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.secret_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
@@ -48,6 +51,7 @@ No modules.
 | <a name="input_db_url"></a> [db\_url](#input\_db\_url) | Address of the Postgresql database used for Valohai | `string` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | Address that will be used to access the service | `string` | n/a | yes |
 | <a name="input_ec2_key"></a> [ec2\_key](#input\_ec2\_key) | Local location of the public key that should be attached to the Valohai owned EC2 instances | `string` | n/a | yes |
+| <a name="input_enable_notebooks"></a> [enable\_notebooks](#input\_enable\_notebooks) | Set to true when enabling notebooks. | `bool` | n/a | yes |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment / organization (e.g. MyOrg) | `string` | n/a | yes |
 | <a name="input_lb_sg"></a> [lb\_sg](#input\_lb\_sg) | Security Group for load balancer | `string` | n/a | yes |
 | <a name="input_lb_target_group_id"></a> [lb\_target\_group\_id](#input\_lb\_target\_group\_id) | ARN of the load balancer | `string` | n/a | yes |
@@ -58,6 +62,7 @@ No modules.
 | <a name="input_s3_bucket_name"></a> [s3\_bucket\_name](#input\_s3\_bucket\_name) | Unique name for the S3 bucket that's used as the default output storage for Valohai | `string` | n/a | yes |
 | <a name="input_s3_kms_key"></a> [s3\_kms\_key](#input\_s3\_kms\_key) | ARN of the created S3 bucket | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id used for ELB | `string` | n/a | yes |
+| <a name="input_notebook_image"></a> [notebook\_image](#input\_notebook\_image) | Docker image URL for notebooks | `string` | `""` | no |
 
 ## Outputs
 

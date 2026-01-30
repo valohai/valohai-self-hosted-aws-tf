@@ -6,8 +6,8 @@ sudo apt-get update
 sudo systemctl stop roi
 export ROI_AUTO_MIGRATE=true
 
-sudo systemctl start docker-network-vhnet
-sudo systemctl enable docker-network-vhnet
+#sudo systemctl start docker-network-vhnet
+#sudo systemctl enable docker-network-vhnet
 
 echo "${file("${module_path}/config/roi.config")}" > /etc/roi.config
 
@@ -21,7 +21,7 @@ sed -i "s|AWS_S3_BUCKET_NAME=|AWS_S3_BUCKET_NAME=${s3_bucket}|" /etc/roi.config
 sed -i "s|AWS_S3_KMS_KEY_ARN=|AWS_S3_KMS_KEY_ARN=${s3_kms_key}|" /etc/roi.config
 sed -i "s|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=arn:aws:iam::${aws_account_id}:role/dev-valohai-iamr-multipart|" /etc/roi.config
 sed -i "s|DEPLOY_REDIS_URL=|DEPLOY_REDIS_URL=redis://${redis_url}:6379|" /etc/roi.config
-sed -i "s|DATABASE_URL=|DATABASE_URL=psql://roi:${db_password}@${db_url}:5432/valohairoidb|" /etc/roi.config
+sed -i "s|DATABASE_URL=|DATABASE_URL=psql://roi:${db_password}@${db_url}:5432/valohairoidb?sslmode=require\&sslcertmode=disable|" /etc/roi.config
 sed -i "s|PLATFORM_LONG_NAME=|PLATFORM_LONG_NAME=${environment_name}|" /etc/roi.config
 sed -i "s|REPO_PRIVATE_KEY_SECRET=|REPO_PRIVATE_KEY_SECRET=$REPO_PRIVATE_KEY|" /etc/roi.config
 sed -i "s|SECRET_KEY=|SECRET_KEY=$SECRET_KEY|" /etc/roi.config
@@ -70,3 +70,14 @@ export ORG_ID=$(sudo docker exec roi.service python manage.py shell --no-imports
 sed -i "s|valohai-env-owner-id: ''|valohai-env-owner-id: '$ORG_ID'|" /home/ubuntu/prep_template.yaml
 
 su ubuntu -c "python3 -m prep --config-yaml /home/ubuntu/prep_template.yaml aws"
+
+if [ ${enable_notebooks} ]; then
+    aws ecr get-login-password --region ${region} |docker login --username AWS --password-stdin ${aws_account_id}.dkr.ecr.${region}.amazonaws.com
+    sudo docker pull ${notebook_image}
+    sudo docker tag  ${notebook_image} valohai/notebook-proxy:latest
+    echo "${file("${module_path}/config/notebook-proxy.service")}" > /etc/systemd/system/notebook-proxy.service
+    sed -i "s|--hostname=|--hostname='notebooks.customer.example:7200'|" /etc/systemd/system/notebook-proxy.service
+    sed -i "s|--token=|--token='<add-your-secret-here>'|" /etc/systemd/system/notebook-proxy.service
+    sudo systemctl start notebook-proxy
+    sudo systemctl enable notebook-proxy
+fi

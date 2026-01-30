@@ -106,3 +106,21 @@ variable "aws_spot_instance_types" {
   type        = list(string)
   default     = []
 }
+
+variable "enable_notebooks" {
+  description = "Set to true when enabling notebooks."
+  type        = bool
+  default     = false
+}
+
+variable "notebook_certificate_arn" {
+  description = "Certificate ARN for notebooks"
+  type        = string
+  default     = "" # "arn:aws:acm:REGION:ACCOUNT:certificate/ID"
+}
+
+variable "notebook_image" {
+  description = "Docker image URL for notebooks"
+  type        = string
+  default     = ""
+}
