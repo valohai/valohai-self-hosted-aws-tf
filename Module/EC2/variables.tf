@@ -93,3 +93,14 @@ variable "aws_spot_instance_types" {
   description = "A list of AWS spot instance types that should be created"
   type        = list(string)
 }
+
+variable "enable_notebooks" {
+  description = "Set to true when enabling notebooks."
+  type        = bool
+}
+
+variable "notebook_image" {
+  description = "Docker image URL for notebooks"
+  type        = string
+  default     = ""
+}

@@ -1,0 +1,24 @@
+[Unit]
+Description=Notebook Proxy Service
+#After=docker.service docker-network-vhnet.service
+Requires=docker.service
+#Wants=docker-network-vhnet.service
+
+[Service]
+Restart=always
+ExecStartPre=-/usr/bin/docker stop %n
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStop=-/usr/bin/docker stop %n
+ExecStart=/usr/bin/docker run \
+    --name=%n \
+    -p7000:7000 \
+    -p7200:7200 \
+    valohai/notebook-proxy:latest \
+    --hostname= \
+    --no-caddy \
+    --frps-http-port=7200 \
+    --token= \
+
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.4.6"
+  required_version = "1.12.1"
   required_providers {
     aws = {
       source = "hashicorp/aws"
@@ -100,6 +100,8 @@ module "EC2" {
   aws_instance_types      = var.aws_instance_types
   aws_spot_instance_types = var.aws_spot_instance_types
   add_spot_instances      = var.add_spot_instances
+  enable_notebooks        = var.enable_notebooks
+  notebook_image          = var.notebook_image
   depends_on              = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]
 }
 
@@ -140,4 +142,20 @@ module "ASG-spots" {
   depends_on = [
     module.IAM_Workers, module.EC2
   ]
+}
+
+module "LB-notebook" {
+  source = "./Module/LB-notebook"
+
+  count = var.enable_notebooks ? 1 : 0
+
+  aws_account_id           = var.aws_account_id
+  vpc_id                   = var.vpc_id
+  lb_subnet_ids            = var.lb_subnet_ids
+  notebook_certificate_arn = var.notebook_certificate_arn
+  valohai_roi_id           = module.EC2.instance_id
+  valohai_sg_roi           = module.EC2.security_group_id
+  valohai_sg_workers       = module.EC2.worker_security_group_id
+
+  depends_on = [module.EC2]
 }
