@@ -1,5 +1,15 @@
+variable "aws_profile" {
+  description = "AWS profile for defining the provider"
+  type        = string
+}
+
+variable "aws_region" {
+  description = "AWS Region"
+  type        = string
+}
+
 variable "vpc_id" {
-  description = "VPC Id used for ELB"
+  description = "VPC Id used for the workers"
   type        = string
 }
 
@@ -11,6 +21,18 @@ variable "subnet_ids" {
 variable "ami" {
   description = "AMI to be used for the Valohai Workers of this ASG"
   type        = string
+}
+
+variable "env_asg_prefix" {
+  description = "Prefix for ASG names in Valohai environments"
+  type        = string
+  default     = "dev-valohai-worker-"
+}
+
+variable "env_queue_prefix" {
+  description = "Prefix for queue names in Valohai environments"
+  type        = string
+  default     = ""
 }
 
 variable "redis_url" {
@@ -46,8 +68,13 @@ variable "ebs_disk_size" {
   default     = "50"
 }
 
-variable "worker_sg_id" {
-  description = "Valohai Worker security group"
+variable "valohai_sg_workers_id" {
+  description = "AWS security group to be attached to the workers"
   type        = string
-  default     = "50"
+}
+
+variable "key_name" {
+  description = "SSH key name for worker instances"
+  type        = string
+  default     = "dev-valohai-key-workers"
 }

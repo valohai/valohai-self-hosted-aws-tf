@@ -29,8 +29,11 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
+| <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | AWS profile for defining the provider | `string` | n/a | yes |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS Region | `string` | n/a | yes |
 | <a name="input_s3_bucket_name"></a> [s3\_bucket\_name](#input\_s3\_bucket\_name) | Unique name for the S3 bucket that's used as the default output storage for Valohai | `string` | n/a | yes |
+| <a name="input_control_plane_account_id"></a> [control\_plane\_account\_id](#input\_control\_plane\_account\_id) | AWS Account ID of the control plane (only used when enable\_cross\_account\_trust is true) | `string` | `""` | no |
+| <a name="input_enable_cross_account_trust"></a> [enable\_cross\_account\_trust](#input\_enable\_cross\_account\_trust) | Enable trust relationship to allow control plane account to assume this role (set to true when creating worker account master role) | `bool` | `false` | no |
 
 ## Outputs
 

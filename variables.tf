@@ -10,12 +10,23 @@ variable "aws_region" {
 }
 
 variable "aws_account_id" {
-  description = "AWS Account ID"
+  description = "AWS Account ID for control plane"
   type        = string
+}
+
+variable "aws_worker_account_id" {
+  description = "AWS Account ID for workers (set this when deploying workers to different account)"
+  type        = string
+  default     = ""
 }
 
 variable "vpc_id" {
   description = "ID of VPC for Roi"
+  type        = string
+}
+
+variable "worker_vpc_id" {
+  description = "ID of VPC for Workers"
   type        = string
 }
 
@@ -73,6 +84,30 @@ variable "organization" {
   default     = "MyOrg"
 }
 
+variable "env_owner_id" {
+  description = "Environment owner ID in Valohai"
+  type        = string
+  default     = "1"
+}
+
+variable "env_name_prefix" {
+  description = "Prefix for Valohai environment names"
+  type        = string
+  default     = ""
+}
+
+variable "env_asg_prefix" {
+  description = "Prefix for ASG names in Valohai environments"
+  type        = string
+  default     = "dev-valohai-worker-"
+}
+
+variable "env_queue_prefix" {
+  description = "Prefix for queue names in Valohai environments"
+  type        = string
+  default     = ""
+}
+
 variable "certificate_arn" {
   description = "Certificate ARN"
   type        = string
@@ -83,6 +118,24 @@ variable "ami_id" {
   description = "AMI id from your Valohai contact"
   type        = string
   default     = ""
+}
+
+variable "install_control_plane" {
+  description = "Install control plane resources (ROI, database, Redis, LB). Set to true for control plane deployment, false for worker-only deployment."
+  type        = bool
+  default     = true
+}
+
+variable "install_workers" {
+  description = "Define if should install the module Workers, false for app installation"
+  type        = bool
+  default     = false
+}
+
+variable "redis_url" {
+  description = "Connection string for the Redis queue, e.g. ':<password>@<URL>'"
+  type        = string
+
 }
 
 variable "aws_instance_types" {
@@ -105,4 +158,10 @@ variable "aws_spot_instance_types" {
   description = "List of AWS spot instance types that should be created"
   type        = list(string)
   default     = []
+}
+
+variable "workers_in_control_plane" {
+  description = "Set to true when workers are in the same AWS account as control plane. Enables direct security group rule between workers and ROI. Set to false for cross-account deployments."
+  type        = bool
+  default     = false
 }

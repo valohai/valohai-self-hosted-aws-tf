@@ -1,33 +1,41 @@
-aws_profile    = "valohai-sandbox"
-aws_region     = "us-east-1"
-aws_account_id = "450886142693"
-ec2_key        = ".valohai-key.pub" # path to your .pub key
-lb_subnet_ids = [                   # Subnets for the ELB
-  "subnet-09fa71506c5274edf",
-  "subnet-0ef2e899c53ce8e3f"
-]
-roi_subnet_id = "subnet-0876140165953bf66" # Subnet for the Valohai app
-db_subnet_ids = [
-  "subnet-0876140165953bf66",
-  "subnet-095202b0a4f855773"
-]
-worker_subnet_ids = [
-  "subnet-0876140165953bf66",
-  "subnet-095202b0a4f855773"
-]
+aws_profile           = ""
+aws_region            = ""
+aws_account_id        = "" # Control plane account ID
+aws_worker_account_id = "" # Worker account ID
+ec2_key               = "" # path to your .pub key
+lb_subnet_ids = [          # Subnets for the ELB
 
-vpc_id           = "vpc-066122736a3c21fc2"
-environment_name = "Valohai"
-s3_bucket_name   = "valohai-data"
-s3_logs_name     = "valohai-data-logs"
-domain           = "https://test.valohai.com"
-certificate_arn  = ""
-organization     = "TestOrg"
-ami_id           = "ami-012e015931dca494c" # AMI id from your Valohai contact
-aws_instance_types = [
-  "t3.small",
-  "c5.2xlarge",
-  "p3.2xlarge"
 ]
-add_spot_instances      = false
-aws_spot_instance_types = []
+roi_subnet_id = "" # Subnet for the control plane
+db_subnet_ids = [
+
+]
+worker_subnet_ids = [ # Subnets for the workers
+
+]
+vpc_id           = "" # VPC id for the control plane
+worker_vpc_id    = "" # VPC id for workers
+environment_name = "Valohai"
+s3_bucket_name   = ""
+s3_logs_name     = ""
+domain           = ""
+certificate_arn  = ""
+organization     = ""
+ami_id           = "" # AMI id from your Valohai contact
+
+# Define what will be installed
+install_control_plane    = true  # True for single account installations, false for cross-account worker installation
+install_workers          = false # false for initial app installation
+workers_in_control_plane = true  # Set to true if workers are in the same AWS account as ROI
+env_owner_id             = ""
+env_name_prefix          = ""
+env_asg_prefix           = "dev-valohai-worker-test-"
+env_queue_prefix         = ""
+redis_url                = "" # Can be left empty when workers installed in the control plane account
+aws_instance_types = [
+  "t3.small"
+]
+add_spot_instances = false
+aws_spot_instance_types = [
+  "t3.medium"
+]

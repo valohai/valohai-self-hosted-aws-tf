@@ -1,5 +1,13 @@
 data "aws_caller_identity" "current" {}
 
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+  }
+}
+
 data "aws_vpc" "valohai_vpc" {
   filter {
     name   = "vpc-id"
@@ -72,7 +80,7 @@ resource "aws_security_group" "valohai_roidb_sg" {
 
 resource "aws_db_parameter_group" "valohai_roidb" {
   name   = "dev-valohai-rdspg-db"
-  family = "postgres14"
+  family = "postgres16"
 
   parameter {
     name  = "log_statement"
@@ -111,9 +119,10 @@ resource "aws_iam_role" "valohai_rds_monitoring_role" {
 resource "aws_db_instance" "valohai_roidb" {
   identifier = "dev-valohai-rds-roidb"
 
-  engine                              = "postgres"
-  engine_version                      = "14"
-  instance_class                      = "db.m5.large"
+  engine         = "postgres"
+  engine_version = "16"
+  #instance_class                      = "db.m5.large"
+  instance_class                      = "db.t3.small" # For dev
   allocated_storage                   = 20
   storage_encrypted                   = true
   multi_az                            = true

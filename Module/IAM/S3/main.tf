@@ -1,6 +1,14 @@
 
 data "aws_caller_identity" "current" {}
 
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+  }
+}
+
 resource "aws_iam_role" "valohai_data_multipart" {
   name        = "dev-valohai-iamr-multipart"
   description = "Allows users to save files over 5GB from their executions"

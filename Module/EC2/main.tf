@@ -1,5 +1,13 @@
 data "aws_caller_identity" "current" {}
 
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+  }
+}
+
 resource "aws_kms_key" "valohai_kms_key" {
   description         = "Valohai KMS key for secrets"
   enable_key_rotation = true
@@ -132,49 +140,33 @@ resource "aws_security_group" "valohai_sg_roi" {
 
   vpc_id = var.vpc_id
 
-  ingress {
-    description     = "for ELB Access "
-    from_port       = 8000
-    to_port         = 8000
-    protocol        = "tcp"
-    security_groups = [var.lb_sg, aws_security_group.valohai_sg_workers.id]
-  }
-
-  egress {
-    description = "Allow outbound access"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name = "dev-valohai-sg-roi",
   }
+}
+
+resource "aws_security_group_rule" "allow_lb_ingress_roi" {
+  type                     = "ingress"
+  from_port                = 8000
+  to_port                  = 8000
+  protocol                 = "tcp"
+  description              = "For ELB"
+  source_security_group_id = var.lb_sg
+  security_group_id        = aws_security_group.valohai_sg_roi.id
+}
+
+resource "aws_security_group_rule" "allow_outboun_roi" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  description       = "Allow outbound access"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.valohai_sg_roi.id
 }
 
 resource "aws_lb_target_group_attachment" "valohai_roi" {
   target_group_arn = var.lb_target_group_id
   target_id        = aws_instance.valohai_roi.id
   port             = 8000
-}
-
-resource "aws_security_group" "valohai_sg_workers" {
-  #checkov:skip=CKV2_AWS_5:Ensure security groups are attached to another resource
-  name        = "dev-valohai-sg-workers"
-  description = "for Valohai workers"
-
-  vpc_id = var.vpc_id
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow outbound access"
-  }
-
-  tags = {
-    Name = "dev-valohai-sg-workers",
-  }
 }

@@ -1,6 +1,14 @@
 data "aws_caller_identity" "current" {}
 data "aws_elb_service_account" "main" {}
 
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+  }
+}
+
 resource "aws_lb" "valohai_lb" {
   #checkov:skip=CKV2_AWS_28:Ensure public facing ALB are protected by WAF
   #checkov:skip=CKV2_AWS_20:Allow using HTTP only on ALB for sample purposes
