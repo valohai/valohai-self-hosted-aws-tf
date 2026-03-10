@@ -1,8 +1,3 @@
-variable "aws_profile" {
-  description = "AWS profile for defining the provider"
-  type        = string
-}
-
 variable "aws_region" {
   description = "AWS Region"
   type        = string
@@ -34,12 +29,6 @@ variable "roi_subnet_id" {
   type        = string
 }
 
-
-variable "ec2_key" {
-  description = "Local location of the public key that should be attached to the Valohai owned EC2 instances"
-  type        = string
-}
-
 variable "redis_url" {
   description = "Address of the redis (node) that will host the job queue and short term logs."
   type        = string
@@ -47,11 +36,6 @@ variable "redis_url" {
 
 variable "domain" {
   description = "Address that will be used to access the service"
-  type        = string
-}
-
-variable "organization" {
-  description = "Name of the organization in Valohai (e.g. MyOrg)"
   type        = string
 }
 

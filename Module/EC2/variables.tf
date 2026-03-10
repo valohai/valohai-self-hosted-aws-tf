@@ -78,18 +78,3 @@ variable "ami_id" {
   description = "AMI id from your Valohai contact"
   type        = string
 }
-
-variable "aws_instance_types" {
-  description = "A list of AWS instance types that should be created"
-  type        = list(string)
-}
-
-variable "add_spot_instances" {
-  description = "Set to true when adding spot instances."
-  type        = bool
-}
-
-variable "aws_spot_instance_types" {
-  description = "A list of AWS spot instance types that should be created"
-  type        = list(string)
-}

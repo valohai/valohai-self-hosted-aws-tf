@@ -1,18 +1,3 @@
-variable "aws_profile" {
-  description = "AWS profile for defining the provider"
-  type        = string
-}
-
-variable "aws_region" {
-  description = "AWS Region"
-  type        = string
-}
-
-variable "vpc_id" {
-  description = "VPC Id used for the workers"
-  type        = string
-}
-
 variable "subnet_ids" {
   description = "A list of subnets where Valohai workers can be placed"
   type        = list(string)

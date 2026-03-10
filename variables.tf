@@ -84,28 +84,18 @@ variable "organization" {
   default     = "MyOrg"
 }
 
-variable "env_owner_id" {
-  description = "Environment owner ID in Valohai"
-  type        = string
-  default     = "1"
-}
-
-variable "env_name_prefix" {
-  description = "Prefix for Valohai environment names"
-  type        = string
-  default     = ""
-}
-
-variable "env_asg_prefix" {
-  description = "Prefix for ASG names in Valohai environments"
-  type        = string
-  default     = "dev-valohai-worker-"
-}
-
-variable "env_queue_prefix" {
-  description = "Prefix for queue names in Valohai environments"
-  type        = string
-  default     = ""
+variable "environments" {
+  description = "Map of Valohai environments to create. Each key is a stable identifier (changing the key destroys and recreates ASGs). Each environment can target different organizations, queues, and instance types."
+  type = map(object({
+    env_owner_id            = string
+    env_name_prefix         = string
+    env_asg_prefix          = string
+    env_queue_prefix        = string
+    redis_url               = string
+    aws_instance_types      = list(string)
+    add_spot_instances      = bool
+    aws_spot_instance_types = list(string)
+  }))
 }
 
 variable "certificate_arn" {
@@ -138,27 +128,6 @@ variable "redis_url" {
 
 }
 
-variable "aws_instance_types" {
-  description = "List of AWS instance types that should be created"
-  type        = list(string)
-  default = [
-    "t3.small",
-    "c5.xlarge",
-    "p3.2xlarge"
-  ]
-}
-
-variable "add_spot_instances" {
-  description = "Set to true when adding spot instances."
-  type        = bool
-  default     = false
-}
-
-variable "aws_spot_instance_types" {
-  description = "List of AWS spot instance types that should be created"
-  type        = list(string)
-  default     = []
-}
 
 variable "workers_in_control_plane" {
   description = "Set to true when workers are in the same AWS account as control plane. Enables direct security group rule between workers and ROI. Set to false for cross-account deployments."
