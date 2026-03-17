@@ -21,6 +21,17 @@ To deploy the resources:
 * Run `terraform plan -out="valohai-init" -var-file=variables.tfvars` to create an execution plan and see what kind of changes will be applied to your AWS Project.
 * Finally run `terraform apply "valohai-init"` to configure the resources needed for a Valohai Hybrid AWS Installation.
 
+> **Note:** Deploy the control plane first (`install_control_plane = true`, `install_workers = false`) and wait for it to complete fully before running a second apply to install workers. The worker setup depends on resources created by the control plane — such as the IAM master role, VPC, Redis, and especially the Valohai app — being fully provisioned and available.
+
+### Deploying workers in a separate AWS account
+
+If you want to run Valohai workers in a different AWS account from the control plane (Valohai app EC2 instance, database, Redis, load balancer), see [CROSS_ACCOUNT_SETUP.md](CROSS_ACCOUNT_SETUP.md) for step-by-step instructions. That guide covers:
+
+* Separate `variables.tfvars` files for each deployment
+* IAM cross-account trust relationships
+* Terraform state management for multiple accounts
+* Provider configuration for multi-account deployments
+
 ### Important
 This example template will create an EC2 instance with port 80 open to the world. Users can then access the Valohai environment directly through their browser. It's a best practice to use HTTPS and forward all of your HTTP requets to HTTPS.
 
@@ -116,6 +127,8 @@ To empty & delete the S3 Bucket:
 
 You can then delete all the resources with:
 * Run `terraform destroy -var-file=variables.tfvars`
+
+> **Note:** If you have deployed workers in a separate AWS account, those resources must be removed independently. Run `terraform destroy` with the worker account's variables file and backend configuration before (or after) destroying the control plane. See [CROSS_ACCOUNT_SETUP.md](CROSS_ACCOUNT_SETUP.md) for the backend configuration commands needed to target each deployment.
 
 ## Terraform state
 
