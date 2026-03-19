@@ -75,6 +75,12 @@ resource "aws_autoscaling_group" "valohai_worker_asg" {
 
   termination_policies = ["ClosestToNextInstanceHour", "NewestInstance"]
 
+  lifecycle {
+    # desired_capacity is managed by Valohai at runtime. Ignoring it prevents
+    # Terraform from scaling down running workers when applying other changes.
+    ignore_changes = [desired_capacity]
+  }
+
   launch_template {
     id      = aws_launch_template.valohai_worker_lt.id
     version = "$Latest"

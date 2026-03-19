@@ -6,8 +6,8 @@ sudo apt-get update
 sudo systemctl stop roi
 export ROI_AUTO_MIGRATE=true
 
-#sudo systemctl start docker-network-vhnet
-#sudo systemctl enable docker-network-vhnet
+sudo systemctl start docker-network-vhnet
+sudo systemctl enable docker-network-vhnet
 
 echo "${file("${module_path}/config/roi.config")}" > /etc/roi.config
 

@@ -91,6 +91,7 @@ variable "environments" {
     env_name_prefix         = string
     env_asg_prefix          = string
     env_queue_prefix        = string
+    worker_role_prefix      = string
     redis_url               = string
     aws_instance_types      = list(string)
     add_spot_instances      = bool

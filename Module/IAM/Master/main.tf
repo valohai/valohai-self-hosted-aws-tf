@@ -104,8 +104,9 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
           "iam:PassRole",
           "iam:GetRole"
         ],
-        "Resource" : "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-worker"
-      },
+        "Resource" : length(var.worker_role_names) > 0 ? [
+          for name in var.worker_role_names : "arn:aws:iam::${var.aws_account_id}:role/${name}"
+      ] : ["arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-worker"] },
       {
         "Sid" : "0",
         "Effect" : "Allow",

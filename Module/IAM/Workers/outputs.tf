@@ -5,3 +5,7 @@ output "worker_role" {
 output "worker_instance_profile_name" {
   value = aws_iam_instance_profile.valohai_worker_profile.name
 }
+
+output "worker_role_name" {
+  value = aws_iam_role.valohai_worker_role.name
+}

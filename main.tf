@@ -42,6 +42,7 @@ module "IAM_Master" {
   s3_bucket_name             = var.s3_bucket_name
   enable_cross_account_trust = var.install_workers && !var.workers_in_control_plane
   control_plane_account_id   = var.aws_account_id # Control plane account ID
+  worker_role_names          = [for k, m in module.IAM_Workers : m.worker_role_name]
 
   depends_on = [module.IAM_Workers]
 }
@@ -62,6 +63,9 @@ module "IAM_Master_CrossAccount_Policy" {
 
 module "IAM_Workers" {
   source = "./Module/IAM/Workers"
+
+  for_each           = var.install_workers ? var.environments : {}
+  worker_role_prefix = each.value.worker_role_prefix
 }
 
 module "IAM_S3" {
@@ -213,7 +217,7 @@ module "Workers_ASG" {
   env_asg_prefix        = each.value.env.env_asg_prefix
   env_queue_prefix      = each.value.env.env_queue_prefix
   valohai_sg_workers_id = module.Workers_Security-groups[0].worker_security_group_id
-  instance_profile      = module.IAM_Workers.worker_instance_profile_name
+  instance_profile      = module.IAM_Workers[each.value.env_key].worker_instance_profile_name
   key_name              = module.Workers_Security-groups[0].worker_key_name
 
   depends_on = [
@@ -234,7 +238,7 @@ module "Workers_ASG-spots" {
   env_asg_prefix        = each.value.env.env_asg_prefix
   env_queue_prefix      = each.value.env.env_queue_prefix
   valohai_sg_workers_id = module.Workers_Security-groups[0].worker_security_group_id
-  instance_profile      = module.IAM_Workers.worker_instance_profile_name
+  instance_profile      = module.IAM_Workers[each.value.env_key].worker_instance_profile_name
   key_name              = module.Workers_Security-groups[0].worker_key_name
 
   depends_on = [

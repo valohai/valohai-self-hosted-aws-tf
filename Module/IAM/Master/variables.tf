@@ -28,3 +28,9 @@ variable "control_plane_account_id" {
   type        = string
   default     = ""
 }
+
+variable "worker_role_names" {
+  description = "Names of the worker IAM roles (one per environment). Used to grant iam:PassRole."
+  type        = list(string)
+  default     = []
+}
