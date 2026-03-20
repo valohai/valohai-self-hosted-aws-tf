@@ -1,5 +1,13 @@
 data "aws_caller_identity" "current" {}
 
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+  }
+}
+
 resource "aws_kms_key" "valohai_kms_key" {
   description         = "Valohai KMS key for secrets"
   enable_key_rotation = true
@@ -88,23 +96,21 @@ resource "aws_instance" "valohai_roi" {
   monitoring             = true
   ebs_optimized          = true
   user_data = templatefile("${path.module}/config/user_data.sh", {
-    repo_private_key        = aws_ssm_parameter.repo_private_key.name
-    secret_key              = aws_ssm_parameter.secret_key.name
-    jwt_key                 = aws_ssm_parameter.jwt_key.name
-    url_base                = var.domain
-    region                  = var.region
-    s3_bucket               = var.s3_bucket_name
-    s3_kms_key              = var.s3_kms_key
-    aws_account_id          = var.aws_account_id
-    redis_url               = var.redis_url
-    db_password             = var.db_password
-    db_url                  = var.db_url
-    environment_name        = var.environment_name
-    module_path             = path.module
-    vpc_id                  = var.vpc_id
-    organization            = var.organization
-    aws_instance_types      = indent(2, yamlencode(var.aws_instance_types))
-    aws_spot_instance_types = var.add_spot_instances ? indent(2, yamlencode(formatlist("%s.spot", var.aws_spot_instance_types))) : ""
+    repo_private_key = aws_ssm_parameter.repo_private_key.name
+    secret_key       = aws_ssm_parameter.secret_key.name
+    jwt_key          = aws_ssm_parameter.jwt_key.name
+    url_base         = var.domain
+    region           = var.region
+    s3_bucket        = var.s3_bucket_name
+    s3_kms_key       = var.s3_kms_key
+    aws_account_id   = var.aws_account_id
+    redis_url        = var.redis_url
+    db_password      = var.db_password
+    db_url           = var.db_url
+    environment_name = var.environment_name
+    module_path      = path.module
+    vpc_id           = var.vpc_id
+    organization     = var.organization
   })
   user_data_replace_on_change = true
 
@@ -132,49 +138,33 @@ resource "aws_security_group" "valohai_sg_roi" {
 
   vpc_id = var.vpc_id
 
-  ingress {
-    description     = "for ELB Access "
-    from_port       = 8000
-    to_port         = 8000
-    protocol        = "tcp"
-    security_groups = [var.lb_sg, aws_security_group.valohai_sg_workers.id]
-  }
-
-  egress {
-    description = "Allow outbound access"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name = "dev-valohai-sg-roi",
   }
+}
+
+resource "aws_security_group_rule" "allow_lb_ingress_roi" {
+  type                     = "ingress"
+  from_port                = 8000
+  to_port                  = 8000
+  protocol                 = "tcp"
+  description              = "For ELB"
+  source_security_group_id = var.lb_sg
+  security_group_id        = aws_security_group.valohai_sg_roi.id
+}
+
+resource "aws_security_group_rule" "allow_outboun_roi" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  description       = "Allow outbound access"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.valohai_sg_roi.id
 }
 
 resource "aws_lb_target_group_attachment" "valohai_roi" {
   target_group_arn = var.lb_target_group_id
   target_id        = aws_instance.valohai_roi.id
   port             = 8000
-}
-
-resource "aws_security_group" "valohai_sg_workers" {
-  #checkov:skip=CKV2_AWS_5:Ensure security groups are attached to another resource
-  name        = "dev-valohai-sg-workers"
-  description = "for Valohai workers"
-
-  vpc_id = var.vpc_id
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow outbound access"
-  }
-
-  tags = {
-    Name = "dev-valohai-sg-workers",
-  }
 }

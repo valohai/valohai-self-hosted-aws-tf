@@ -1,5 +1,13 @@
 data "aws_caller_identity" "current" {}
 
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+  }
+}
+
 resource "aws_kms_key" "valohai_data_kms_key" {
   description         = "Valohai KMS key for default S3 bucket"
   enable_key_rotation = true
@@ -15,7 +23,6 @@ resource "aws_kms_key" "valohai_data_kms_key" {
           "AWS" : [
             "arn:aws:iam::${var.aws_account_id}:root",
             "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-master",
-            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-worker",
             "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-multipart"
           ]
         },

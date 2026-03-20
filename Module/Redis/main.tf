@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+  }
+}
+
 data "aws_vpc" "valohai_vpc" {
   filter {
     name   = "vpc-id"
@@ -12,9 +20,10 @@ resource "aws_elasticache_subnet_group" "valohai_queue_subnet" {
 }
 
 resource "aws_elasticache_cluster" "valohai_queue" {
-  cluster_id               = "dev-valohai-elc-queue"
-  engine                   = "redis"
-  node_type                = "cache.m4.xlarge"
+  cluster_id = "dev-valohai-elc-queue"
+  engine     = "redis"
+  #node_type                = "cache.m4.xlarge"
+  node_type                = "cache.t3.small" # dev
   num_cache_nodes          = 1
   engine_version           = "6.2"
   port                     = 6379

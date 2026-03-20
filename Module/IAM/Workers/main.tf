@@ -1,5 +1,5 @@
 resource "aws_iam_role_policy" "valohai_worker_policy" {
-  name = "dev-valohai-iamp-worker"
+  name = "${var.worker_role_prefix}iamp-worker"
   role = aws_iam_role.valohai_worker_role.name
 
   policy = jsonencode({
@@ -16,13 +16,23 @@ resource "aws_iam_role_policy" "valohai_worker_policy" {
         "Resource" : "*",
         "Effect" : "Allow",
         "Sid" : "2"
+      },
+      {
+        "Sid" : "KMSAccess",
+        "Effect" : "Allow",
+        "Action" : [
+          "kms:GenerateDataKey",
+          "kms:Decrypt",
+          "kms:DescribeKey"
+        ],
+        "Resource" : "*"
       }
     ]
   })
 }
 
 resource "aws_iam_role" "valohai_worker_role" {
-  name        = "dev-valohai-iamr-worker"
+  name        = "${var.worker_role_prefix}iamr-worker"
   description = "A Valohai role that is by default assigned to all launched EC2 instances"
 
   assume_role_policy = jsonencode({
@@ -40,7 +50,7 @@ resource "aws_iam_role" "valohai_worker_role" {
 }
 
 resource "aws_iam_instance_profile" "valohai_worker_profile" {
-  name = "dev-valohai-iamri-worker"
+  name = "${var.worker_role_prefix}iamri-worker"
   role = aws_iam_role.valohai_worker_role.name
 }
 

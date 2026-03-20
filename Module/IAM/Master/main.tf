@@ -1,19 +1,38 @@
 data "aws_caller_identity" "current" {}
 
+locals {
+  # Base trust policy statements
+  base_trust_statements = [
+    {
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }
+  ]
+
+  # Cross-account trust statement (only when enable_cross_account_trust is true)
+  cross_account_trust_statements = var.enable_cross_account_trust ? [
+    {
+      Effect = "Allow"
+      Principal = {
+        AWS = "arn:aws:iam::${var.control_plane_account_id}:role/dev-valohai-iamr-master"
+      }
+      Action = "sts:AssumeRole"
+    }
+  ] : []
+
+  # Combine statements
+  trust_statements = concat(local.base_trust_statements, local.cross_account_trust_statements)
+}
+
 resource "aws_iam_role" "valohai_master_role" {
   name = "dev-valohai-iamr-master"
 
   assume_role_policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Effect" : "Allow",
-        "Principal" : {
-          "Service" : "ec2.amazonaws.com"
-        },
-        "Action" : "sts:AssumeRole"
-      }
-    ]
+    Version   = "2012-10-17"
+    Statement = local.trust_statements
   })
 }
 
@@ -85,14 +104,17 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
           "iam:PassRole",
           "iam:GetRole"
         ],
-        "Resource" : "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-worker"
-      },
+        "Resource" : length(var.worker_role_names) > 0 ? [
+          for name in var.worker_role_names : "arn:aws:iam::${var.aws_account_id}:role/${name}"
+      ] : ["arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-worker"] },
       {
         "Sid" : "0",
         "Effect" : "Allow",
         "Action" : [
           "ssm:GetParameter",
           "ssm:GetParameters",
+          "ssm:PutParameter",
+          "ssm:AddTagsToResource",
           "ssm:DescribeParameters"
         ],
         "Resource" : "*"

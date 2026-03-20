@@ -16,11 +16,11 @@ data "aws_ami" "valohai" {
 }
 
 resource "aws_launch_template" "valohai_worker_lt" {
-  name_prefix            = "valohai-lt-worker-${var.instance_type}"
+  name_prefix            = "${var.env_asg_prefix}lt-${var.instance_type}"
   image_id               = (var.ami == "") ? data.aws_ami.valohai.id : var.ami
   instance_type          = var.instance_type
-  key_name               = "dev-valohai-key-valohai"
-  user_data              = base64encode(templatefile("${path.module}/peon/userdata", { queue_name = "${var.region}-${var.instance_type}", redis_url = "redis://:@${var.redis_url}:6379" }))
+  key_name               = var.key_name
+  user_data              = base64encode(templatefile("${path.module}/peon/userdata", { queue_name = "${var.env_queue_prefix}${var.region}-${var.instance_type}", redis_url = "redis://:@${var.redis_url}:6379" }))
   update_default_version = true
   ebs_optimized          = true
 
@@ -32,7 +32,7 @@ resource "aws_launch_template" "valohai_worker_lt" {
 
   network_interfaces {
     associate_public_ip_address = var.assign_public_ip
-    security_groups             = [var.worker_sg_id]
+    security_groups             = [var.valohai_sg_workers_id]
     delete_on_termination       = true
   }
 
@@ -63,7 +63,7 @@ resource "aws_launch_template" "valohai_worker_lt" {
 }
 
 resource "aws_autoscaling_group" "valohai_worker_asg" {
-  name                      = "dev-valohai-asg-worker-${var.instance_type}"
+  name                      = "${var.env_asg_prefix}${var.instance_type}"
   max_size                  = 100
   min_size                  = 0
   health_check_grace_period = 0
@@ -74,6 +74,12 @@ resource "aws_autoscaling_group" "valohai_worker_asg" {
   default_cooldown          = 60
 
   termination_policies = ["ClosestToNextInstanceHour", "NewestInstance"]
+
+  lifecycle {
+    # desired_capacity is managed by Valohai at runtime. Ignoring it prevents
+    # Terraform from scaling down running workers when applying other changes.
+    ignore_changes = [desired_capacity]
+  }
 
   launch_template {
     id      = aws_launch_template.valohai_worker_lt.id

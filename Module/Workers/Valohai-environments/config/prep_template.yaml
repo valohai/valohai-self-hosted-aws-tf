@@ -3,10 +3,13 @@ prep:
   valohai-token: '' # vh token
   roi-env-mode: 'CREATE_OR_UPDATE'
   valohai-env-owner-id: '' # vh organization ID
+  valohai-env-name-prefix: ''
+  superuser: true
 aws:
   aws-profile: 'default'
   update-aws: false
-  asg-name-prefix: 'dev-valohai-worker-' # https://github.com/valohai/valohai-self-hosted-aws-tf/blob/fc7128ecaaa7f192cdc507d712847796b44e07cb/Module/ASG/main.tf#L66
+  asg-name-prefix: '' # https://github.com/valohai/valohai-self-hosted-aws-tf/blob/fc7128ecaaa7f192cdc507d712847796b44e07cb/Module/ASG/main.tf#L66
+  queue-name-prefix: ''
   verify-redis: false
   installation-type: private-worker
   disk-size-gb: 50 # increase disk size if needed

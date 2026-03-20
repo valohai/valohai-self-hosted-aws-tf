@@ -26,7 +26,8 @@ No modules.
 | [aws_kms_key.valohai_kms_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_lb_target_group_attachment.valohai_roi](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group_attachment) | resource |
 | [aws_security_group.valohai_sg_roi](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
-| [aws_security_group.valohai_sg_workers](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group_rule.allow_lb_ingress_roi](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.allow_outboun_roi](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_ssm_parameter.jwt_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.repo_private_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.secret_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
@@ -39,11 +40,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_add_spot_instances"></a> [add\_spot\_instances](#input\_add\_spot\_instances) | Set to true when adding spot instances. | `bool` | n/a | yes |
 | <a name="input_ami_id"></a> [ami\_id](#input\_ami\_id) | AMI id from your Valohai contact | `string` | n/a | yes |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS Account ID | `string` | n/a | yes |
-| <a name="input_aws_instance_types"></a> [aws\_instance\_types](#input\_aws\_instance\_types) | A list of AWS instance types that should be created | `list(string)` | n/a | yes |
-| <a name="input_aws_spot_instance_types"></a> [aws\_spot\_instance\_types](#input\_aws\_spot\_instance\_types) | A list of AWS spot instance types that should be created | `list(string)` | n/a | yes |
 | <a name="input_db_password"></a> [db\_password](#input\_db\_password) | Password for the Postgresql database | `string` | n/a | yes |
 | <a name="input_db_url"></a> [db\_url](#input\_db\_url) | Address of the Postgresql database used for Valohai | `string` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | Address that will be used to access the service | `string` | n/a | yes |
@@ -64,6 +62,5 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_instance_id"></a> [instance\_id](#output\_instance\_id) | n/a |
-| <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | n/a |
-| <a name="output_worker_security_group_id"></a> [worker\_security\_group\_id](#output\_worker\_security\_group\_id) | n/a |
+| <a name="output_roi_security_group_id"></a> [roi\_security\_group\_id](#output\_roi\_security\_group\_id) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
