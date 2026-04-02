@@ -63,3 +63,9 @@ variable "key_name" {
   type        = string
   default     = "dev-valohai-key-workers"
 }
+
+variable "custom_tags" {
+  description = "Custom tags to apply to worker instances"
+  type        = map(string)
+  default     = {}
+}

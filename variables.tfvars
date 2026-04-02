@@ -24,10 +24,10 @@ organization     = ""
 ami_id           = "" # AMI id from your Valohai contact
 
 # Define what will be installed
-install_control_plane    = true                                                         # True for single account installations, false for cross-account worker installation
-install_workers          = false                                                        # false for initial app installation
-workers_in_control_plane = true                                                         # Set to true if workers are in the same AWS account as ROI
-redis_url                = "dev-valohai-elc-queue.vpzxtx.0001.use1.cache.amazonaws.com" # Global fallback Redis URL from the control plane deployment
+install_control_plane    = true  # True for single account installations, false for cross-account worker installation
+install_workers          = false # false for initial app installation
+workers_in_control_plane = true  # Set to true if workers are in the same AWS account as ROI
+redis_url                = ""    # Global fallback Redis URL from the control plane deployment
 
 # Worker setup
 environments = {
@@ -41,5 +41,8 @@ environments = {
     aws_instance_types      = ["t3.small"]
     add_spot_instances      = false
     aws_spot_instance_types = ["t3.medium"]
+    custom_tags = {
+      "Environment" = "dev"
+    }
   }
 }

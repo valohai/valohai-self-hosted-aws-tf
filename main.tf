@@ -219,6 +219,7 @@ module "Workers_ASG" {
   valohai_sg_workers_id = module.Workers_Security-groups[0].worker_security_group_id
   instance_profile      = module.IAM_Workers[each.value.env_key].worker_instance_profile_name
   key_name              = module.Workers_Security-groups[0].worker_key_name
+  custom_tags           = each.value.env.custom_tags
 
   depends_on = [
     module.IAM_Workers, module.EC2, module.Workers_Security-groups
@@ -240,6 +241,7 @@ module "Workers_ASG-spots" {
   valohai_sg_workers_id = module.Workers_Security-groups[0].worker_security_group_id
   instance_profile      = module.IAM_Workers[each.value.env_key].worker_instance_profile_name
   key_name              = module.Workers_Security-groups[0].worker_key_name
+  custom_tags           = each.value.env.custom_tags
 
   depends_on = [
     module.IAM_Workers, module.EC2, module.Workers_Security-groups

@@ -54,11 +54,14 @@ resource "aws_launch_template" "valohai_worker_lt" {
   tag_specifications {
     resource_type = "instance"
 
-    tags = {
-      "Role"             = "ValohaiWorker"
-      "ProvisionedUsing" = "Terraform"
-      "valohai"          = "1"
-    }
+    tags = merge(
+      {
+        "Role"             = "ValohaiWorker"
+        "ProvisionedUsing" = "Terraform"
+        "valohai"          = "1"
+      },
+      var.custom_tags
+    )
   }
 }
 

@@ -34,6 +34,7 @@ No modules.
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | A list of subnets where Valohai workers can be placed | `list(string)` | n/a | yes |
 | <a name="input_valohai_sg_workers_id"></a> [valohai\_sg\_workers\_id](#input\_valohai\_sg\_workers\_id) | AWS security group to be attached to the workers | `string` | n/a | yes |
 | <a name="input_assign_public_ip"></a> [assign\_public\_ip](#input\_assign\_public\_ip) | Defines is workers should get a public IP | `bool` | `false` | no |
+| <a name="input_custom_tags"></a> [custom\_tags](#input\_custom\_tags) | Custom tags to apply to worker instances | `map(string)` | `{}` | no |
 | <a name="input_ebs_disk_size"></a> [ebs\_disk\_size](#input\_ebs\_disk\_size) | EBS disk size for Valohai instances | `string` | `"50"` | no |
 | <a name="input_env_asg_prefix"></a> [env\_asg\_prefix](#input\_env\_asg\_prefix) | Prefix for ASG names in Valohai environments | `string` | `"dev-valohai-worker-"` | no |
 | <a name="input_env_queue_prefix"></a> [env\_queue\_prefix](#input\_env\_queue\_prefix) | Prefix for queue names in Valohai environments | `string` | `""` | no |
