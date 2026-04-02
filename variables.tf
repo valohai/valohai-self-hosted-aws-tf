@@ -96,6 +96,7 @@ variable "environments" {
     aws_instance_types      = list(string)
     add_spot_instances      = bool
     aws_spot_instance_types = list(string)
+    custom_tags             = optional(map(string), {})
   }))
 }
 
