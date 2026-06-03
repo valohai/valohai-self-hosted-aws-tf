@@ -34,3 +34,13 @@ variable "worker_role_names" {
   type        = list(string)
   default     = []
 }
+
+variable "resource_name_prefix" {
+  description = "Prefix for all named AWS resources"
+  type        = string
+}
+
+variable "control_plane_resource_name_prefix" {
+  description = "resource_name_prefix used in the control plane account (referenced by the cross-account trust policy when enable_cross_account_trust is true)"
+  type        = string
+}

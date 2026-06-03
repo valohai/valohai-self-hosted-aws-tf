@@ -22,8 +22,8 @@ resource "aws_kms_key" "valohai_data_kms_key" {
         "Principal" : {
           "AWS" : [
             "arn:aws:iam::${var.aws_account_id}:root",
-            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-master",
-            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-multipart"
+            "arn:aws:iam::${var.aws_account_id}:role/${var.resource_name_prefix}iamr-master",
+            "arn:aws:iam::${var.aws_account_id}:role/${var.resource_name_prefix}iamr-multipart"
           ]
         },
         "Action" : "kms:*",

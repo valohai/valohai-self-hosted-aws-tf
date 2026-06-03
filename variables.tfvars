@@ -24,10 +24,15 @@ organization     = ""
 ami_id           = "" # AMI id from your Valohai contact
 
 # Define what will be installed
-install_control_plane    = true  # True for single account installations, false for cross-account worker installation
-install_workers          = false # false for initial app installation
-workers_in_control_plane = true  # Set to true if workers are in the same AWS account as ROI
-redis_url                = ""    # Global fallback Redis URL from the control plane deployment
+install_control_plane    = true           # True for single account installations, false for cross-account worker installation
+install_workers          = false          # false for initial app installation
+workers_in_control_plane = true           # Set to true if workers are in the same AWS account as ROI
+redis_url                = ""             # Global fallback Redis URL from the control plane deployment
+resource_name_prefix     = "dev-valohai-" # General prefix for resource names
+# Only needed for cross-account worker deployments: the resource_name_prefix of the control plane account.
+# Leave empty/unset to reuse resource_name_prefix (same prefix in both accounts).
+# control_plane_resource_name_prefix = ""
+
 
 # Worker setup
 environments = {

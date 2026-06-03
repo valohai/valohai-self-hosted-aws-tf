@@ -52,6 +52,7 @@ No modules.
 | <a name="input_organization"></a> [organization](#input\_organization) | Name of the organization in Valohai (e.g. MyOrg) | `string` | n/a | yes |
 | <a name="input_redis_url"></a> [redis\_url](#input\_redis\_url) | Address of the redis (node) that will host the job queue and short term logs. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | Region | `string` | n/a | yes |
+| <a name="input_resource_name_prefix"></a> [resource\_name\_prefix](#input\_resource\_name\_prefix) | Prefix for all named AWS resources | `string` | n/a | yes |
 | <a name="input_roi_subnet_id"></a> [roi\_subnet\_id](#input\_roi\_subnet\_id) | Subnet used for core Valohai web app and scaling services (Roi) | `string` | n/a | yes |
 | <a name="input_s3_bucket_name"></a> [s3\_bucket\_name](#input\_s3\_bucket\_name) | Unique name for the S3 bucket that's used as the default output storage for Valohai | `string` | n/a | yes |
 | <a name="input_s3_kms_key"></a> [s3\_kms\_key](#input\_s3\_kms\_key) | ARN of the created S3 bucket | `string` | n/a | yes |

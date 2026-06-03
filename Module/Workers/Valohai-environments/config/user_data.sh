@@ -7,7 +7,7 @@ sudo apt-get -o DPkg::Lock::Timeout=-1 install jq -y
 # Set up the environments
 echo "${file("${module_path}/config/prep_template.yaml")}" > /home/ubuntu/prep_template.yaml
 
-export VH_TOKEN=`aws ssm get-parameter --name 'dev-valohai-app-token' --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
+export VH_TOKEN=`aws ssm get-parameter --name ${control_plane_resource_name_prefix}app-token --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
 sed -i "s|valohai-token: ''|valohai-token: '$VH_TOKEN'|" /home/ubuntu/prep_template.yaml
 unset VH_TOKEN
 
@@ -17,9 +17,9 @@ sed -i "s|asg-name-prefix: ''|asg-name-prefix: '${env_asg_prefix}'|" /home/ubunt
 sed -i "s|queue-name-prefix: ''|queue-name-prefix: '${env_queue_prefix}'|" /home/ubuntu/prep_template.yaml
 sed -i "s|region: ''|region: '${region}'|" /home/ubuntu/prep_template.yaml
 sed -i "s|redis-url: ''|redis-url: 'redis://${redis_url}:6379'|" /home/ubuntu/prep_template.yaml
-sed -i "s|security-group-name: ''|security-group-name: 'dev-valohai-sg-workers'|" /home/ubuntu/prep_template.yaml
+sed -i "s|security-group-name: ''|security-group-name: '${resource_name_prefix}sg-workers'|" /home/ubuntu/prep_template.yaml
 sed -i "s|vpc-id: ''|vpc-id: '${worker_vpc_id}'|" /home/ubuntu/prep_template.yaml
-sed -i "s|key-pair-name: ''|key-pair-name: 'dev-valohai-key-workers'|" /home/ubuntu/prep_template.yaml
+sed -i "s|key-pair-name: ''|key-pair-name: '${resource_name_prefix}key-workers'|" /home/ubuntu/prep_template.yaml
 echo "  ${aws_instance_types}" >> /home/ubuntu/prep_template.yaml
 echo "  ${aws_spot_instance_types}" >> /home/ubuntu/prep_template.yaml
 
@@ -30,7 +30,7 @@ if [ "${aws_account_id}" != "${aws_worker_account_id}" ]; then
   echo "Setting up cross-account access to worker account..."
 
   # Assume worker account role
-  WORKER_ROLE_ARN="arn:aws:iam::${aws_worker_account_id}:role/dev-valohai-iamr-master"
+  WORKER_ROLE_ARN="arn:aws:iam::${aws_worker_account_id}:role/${resource_name_prefix}iamr-master"
 
   CREDS=$(aws sts assume-role \
     --role-arn "$WORKER_ROLE_ARN" \

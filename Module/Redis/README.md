@@ -29,6 +29,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cache_subnet_ids"></a> [cache\_subnet\_ids](#input\_cache\_subnet\_ids) | A list of (private) subnets for the Redis Elasticache used to store short-term logs and the job queue. | `list(string)` | n/a | yes |
+| <a name="input_resource_name_prefix"></a> [resource\_name\_prefix](#input\_resource\_name\_prefix) | Prefix for all named AWS resources | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id used for ELB | `string` | n/a | yes |
 
 ## Outputs

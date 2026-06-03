@@ -82,3 +82,13 @@ variable "aws_spot_instance_types" {
   description = "A list of AWS spot instance types that should be created"
   type        = list(string)
 }
+
+variable "resource_name_prefix" {
+  description = "Prefix for all named AWS resources"
+  type        = string
+}
+
+variable "control_plane_resource_name_prefix" {
+  description = "resource_name_prefix used in the control plane account. The setup machine runs in the control plane account, so its key pair, instance profile and app-token SSM parameter use this prefix."
+  type        = string
+}

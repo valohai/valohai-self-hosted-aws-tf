@@ -14,6 +14,18 @@ variable "aws_account_id" {
   type        = string
 }
 
+variable "resource_name_prefix" {
+  description = "Prefix for all named AWS resources"
+  type        = string
+  default     = "dev-valohai-"
+}
+
+variable "control_plane_resource_name_prefix" {
+  description = "resource_name_prefix used in the control plane account. Only needed in a cross-account worker deployment, where worker resources reference the control plane's master role, key pair, instance profile and app-token. Leave empty to reuse resource_name_prefix (same prefix in both accounts)."
+  type        = string
+  default     = ""
+}
+
 variable "aws_worker_account_id" {
   description = "AWS Account ID for workers (set this when deploying workers to different account)"
   type        = string

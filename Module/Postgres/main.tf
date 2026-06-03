@@ -29,8 +29,8 @@ resource "aws_kms_key" "valohai_db_kms_key" {
         "Principal" : {
           "AWS" : [
             "arn:aws:iam::${var.aws_account_id}:root",
-            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-master",
-            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-rdsmonitor",
+            "arn:aws:iam::${var.aws_account_id}:role/${var.resource_name_prefix}iamr-master",
+            "arn:aws:iam::${var.aws_account_id}:role/${var.resource_name_prefix}iamr-rdsmonitor",
           ]
         },
         "Action" : "kms:*",
@@ -42,7 +42,7 @@ resource "aws_kms_key" "valohai_db_kms_key" {
 
 resource "aws_kms_alias" "valohai_kms_alias" {
   target_key_id = aws_kms_key.valohai_db_kms_key.key_id
-  name          = "alias/dev-valohai-kmsa-valohaidb"
+  name          = "alias/${var.resource_name_prefix}kmsa-valohaidb"
 }
 
 resource "random_password" "password" {
@@ -51,7 +51,7 @@ resource "random_password" "password" {
 }
 
 resource "aws_ssm_parameter" "db_password" {
-  name        = "dev-valohai-ssm-dbpassword"
+  name        = "${var.resource_name_prefix}ssm-dbpassword"
   type        = "SecureString"
   description = "Password for Valohai roidb"
   value       = random_password.password.result
@@ -59,13 +59,13 @@ resource "aws_ssm_parameter" "db_password" {
 }
 
 resource "aws_db_subnet_group" "valohai_roidb_subnet" {
-  name       = "dev-valohai-rds-subnet"
+  name       = "${var.resource_name_prefix}rds-subnet"
   subnet_ids = var.db_subnet_ids
 
 }
 
 resource "aws_security_group" "valohai_roidb_sg" {
-  name        = "dev-valohai-rds-db"
+  name        = "${var.resource_name_prefix}rds-db"
   description = "Valohai RDS security group"
   vpc_id      = var.vpc_id
 
@@ -79,7 +79,7 @@ resource "aws_security_group" "valohai_roidb_sg" {
 }
 
 resource "aws_db_parameter_group" "valohai_roidb" {
-  name   = "dev-valohai-rdspg-db"
+  name   = "${var.resource_name_prefix}rdspg-db"
   family = "postgres16"
 
   parameter {
@@ -94,7 +94,7 @@ resource "aws_db_parameter_group" "valohai_roidb" {
 }
 
 resource "aws_iam_role" "valohai_rds_monitoring_role" {
-  name = "dev-valohai-iamr-rdsmonitor"
+  name = "${var.resource_name_prefix}iamr-rdsmonitor"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -112,12 +112,12 @@ resource "aws_iam_role" "valohai_rds_monitoring_role" {
   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"]
 
   tags = {
-    Name = "dev-valohai-iamr-rdsmonitor"
+    Name = "${var.resource_name_prefix}iamr-rdsmonitor"
   }
 }
 
 resource "aws_db_instance" "valohai_roidb" {
-  identifier = "dev-valohai-rds-roidb"
+  identifier = "${var.resource_name_prefix}rds-roidb"
 
   engine         = "postgres"
   engine_version = "16"
