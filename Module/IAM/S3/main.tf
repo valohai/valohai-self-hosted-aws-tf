@@ -10,7 +10,7 @@ terraform {
 }
 
 resource "aws_iam_role" "valohai_data_multipart" {
-  name        = "dev-valohai-iamr-multipart"
+  name        = "${var.resource_name_prefix}iamr-multipart"
   description = "Allows users to save files over 5GB from their executions"
 
   assume_role_policy = jsonencode({
@@ -19,7 +19,7 @@ resource "aws_iam_role" "valohai_data_multipart" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "AWS" : "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-master"
+          "AWS" : "arn:aws:iam::${var.aws_account_id}:role/${var.resource_name_prefix}iamr-master"
         },
         "Action" : "sts:AssumeRole"
       }
@@ -28,7 +28,7 @@ resource "aws_iam_role" "valohai_data_multipart" {
 }
 
 resource "aws_iam_role_policy" "valohai_multipart_policy" {
-  name = "dev-valohai-iamp-multipart"
+  name = "${var.resource_name_prefix}iamp-multipart"
   role = aws_iam_role.valohai_data_multipart.name
 
   policy = jsonencode({

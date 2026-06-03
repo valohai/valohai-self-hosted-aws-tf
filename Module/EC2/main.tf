@@ -22,7 +22,7 @@ resource "aws_kms_key" "valohai_kms_key" {
         "Principal" : {
           "AWS" : [
             "arn:aws:iam::${var.aws_account_id}:root",
-            "arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-master",
+            "arn:aws:iam::${var.aws_account_id}:role/${var.resource_name_prefix}iamr-master",
           ]
         },
         "Action" : "kms:*",
@@ -42,7 +42,7 @@ resource "random_password" "repo_private_key" {
 }
 
 resource "aws_ssm_parameter" "repo_private_key" {
-  name        = "dev-valohai-ssm-repo"
+  name        = "${var.resource_name_prefix}ssm-repo"
   type        = "SecureString"
   description = "Secure repository key for Valohai"
   value       = random_password.repo_private_key.result
@@ -55,7 +55,7 @@ resource "random_password" "secret_key" {
 }
 
 resource "aws_ssm_parameter" "secret_key" {
-  name        = "dev-valohai-ssm-secret"
+  name        = "${var.resource_name_prefix}ssm-secret"
   type        = "SecureString"
   description = "Secure secret key for Valohai"
   value       = random_password.secret_key.result
@@ -68,7 +68,7 @@ resource "random_password" "jwt_key" {
 }
 
 resource "aws_ssm_parameter" "jwt_key" {
-  name        = "dev-valohai-ssm-jwt"
+  name        = "${var.resource_name_prefix}ssm-jwt"
   type        = "SecureString"
   description = "Secure jwt key for Valohai"
   value       = random_password.jwt_key.result
@@ -77,11 +77,11 @@ resource "aws_ssm_parameter" "jwt_key" {
 
 # Load public key
 resource "aws_key_pair" "valohai_roi_key" {
-  key_name   = "dev-valohai-key-valohai"
+  key_name   = "${var.resource_name_prefix}key-valohai"
   public_key = file(var.ec2_key)
 
   tags = {
-    Name = "dev-valohai-key-valohai",
+    Name = "${var.resource_name_prefix}key-valohai",
   }
 }
 
@@ -92,25 +92,26 @@ resource "aws_instance" "valohai_roi" {
   key_name               = aws_key_pair.valohai_roi_key.id
   vpc_security_group_ids = [aws_security_group.valohai_sg_roi.id]
   subnet_id              = var.roi_subnet_id
-  iam_instance_profile   = "dev-valohai-iami-master"
+  iam_instance_profile   = "${var.resource_name_prefix}iami-master"
   monitoring             = true
   ebs_optimized          = true
   user_data = templatefile("${path.module}/config/user_data.sh", {
-    repo_private_key = aws_ssm_parameter.repo_private_key.name
-    secret_key       = aws_ssm_parameter.secret_key.name
-    jwt_key          = aws_ssm_parameter.jwt_key.name
-    url_base         = var.domain
-    region           = var.region
-    s3_bucket        = var.s3_bucket_name
-    s3_kms_key       = var.s3_kms_key
-    aws_account_id   = var.aws_account_id
-    redis_url        = var.redis_url
-    db_password      = var.db_password
-    db_url           = var.db_url
-    environment_name = var.environment_name
-    module_path      = path.module
-    vpc_id           = var.vpc_id
-    organization     = var.organization
+    repo_private_key     = aws_ssm_parameter.repo_private_key.name
+    secret_key           = aws_ssm_parameter.secret_key.name
+    jwt_key              = aws_ssm_parameter.jwt_key.name
+    url_base             = var.domain
+    region               = var.region
+    s3_bucket            = var.s3_bucket_name
+    s3_kms_key           = var.s3_kms_key
+    aws_account_id       = var.aws_account_id
+    redis_url            = var.redis_url
+    db_password          = var.db_password
+    db_url               = var.db_url
+    environment_name     = var.environment_name
+    module_path          = path.module
+    vpc_id               = var.vpc_id
+    organization         = var.organization
+    resource_name_prefix = var.resource_name_prefix
   })
   user_data_replace_on_change = true
 
@@ -127,19 +128,19 @@ resource "aws_instance" "valohai_roi" {
   }
 
   tags = {
-    Name = "dev-valohai-ec2-roi",
+    Name = "${var.resource_name_prefix}ec2-roi",
   }
 
 }
 
 resource "aws_security_group" "valohai_sg_roi" {
-  name        = "dev-valohai-sg-roi"
+  name        = "${var.resource_name_prefix}sg-roi"
   description = "for Valohai Roi"
 
   vpc_id = var.vpc_id
 
   tags = {
-    Name = "dev-valohai-sg-roi",
+    Name = "${var.resource_name_prefix}sg-roi",
   }
 }
 

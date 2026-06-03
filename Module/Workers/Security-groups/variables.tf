@@ -19,3 +19,8 @@ variable "ec2_key" {
   description = "Location of the ssh key pub file for worker instances"
   type        = string
 }
+
+variable "resource_name_prefix" {
+  description = "Prefix for all named AWS resources"
+  type        = string
+}

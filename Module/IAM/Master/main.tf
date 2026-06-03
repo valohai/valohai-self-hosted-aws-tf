@@ -17,7 +17,7 @@ locals {
     {
       Effect = "Allow"
       Principal = {
-        AWS = "arn:aws:iam::${var.control_plane_account_id}:role/dev-valohai-iamr-master"
+        AWS = "arn:aws:iam::${var.control_plane_account_id}:role/${var.control_plane_resource_name_prefix}iamr-master"
       }
       Action = "sts:AssumeRole"
     }
@@ -28,7 +28,7 @@ locals {
 }
 
 resource "aws_iam_role" "valohai_master_role" {
-  name = "dev-valohai-iamr-master"
+  name = "${var.resource_name_prefix}iamr-master"
 
   assume_role_policy = jsonencode({
     Version   = "2012-10-17"
@@ -37,12 +37,12 @@ resource "aws_iam_role" "valohai_master_role" {
 }
 
 resource "aws_iam_instance_profile" "valohai_master_profile" {
-  name = "dev-valohai-iami-master"
+  name = "${var.resource_name_prefix}iami-master"
   role = aws_iam_role.valohai_master_role.name
 }
 
 resource "aws_iam_role_policy" "valohai_master_policy" {
-  name = "dev-valohai-iamp-master"
+  name = "${var.resource_name_prefix}iamp-master"
   role = aws_iam_role.valohai_master_role.name
 
   policy = jsonencode({
@@ -106,7 +106,7 @@ resource "aws_iam_role_policy" "valohai_master_policy" {
         ],
         "Resource" : length(var.worker_role_names) > 0 ? [
           for name in var.worker_role_names : "arn:aws:iam::${var.aws_account_id}:role/${name}"
-      ] : ["arn:aws:iam::${var.aws_account_id}:role/dev-valohai-iamr-worker"] },
+      ] : ["arn:aws:iam::${var.aws_account_id}:role/${var.resource_name_prefix}iamr-worker"] },
       {
         "Sid" : "0",
         "Effect" : "Allow",

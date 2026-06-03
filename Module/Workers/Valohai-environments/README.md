@@ -31,9 +31,11 @@ No modules.
 | <a name="input_aws_instance_types"></a> [aws\_instance\_types](#input\_aws\_instance\_types) | A list of AWS instance types that should be created | `list(string)` | n/a | yes |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS Region | `string` | n/a | yes |
 | <a name="input_aws_spot_instance_types"></a> [aws\_spot\_instance\_types](#input\_aws\_spot\_instance\_types) | A list of AWS spot instance types that should be created | `list(string)` | n/a | yes |
+| <a name="input_control_plane_resource_name_prefix"></a> [control\_plane\_resource\_name\_prefix](#input\_control\_plane\_resource\_name\_prefix) | resource\_name\_prefix used in the control plane account. The setup machine runs in the control plane account, so its key pair, instance profile and app-token SSM parameter use this prefix. | `string` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | Address that will be used to access the service | `string` | n/a | yes |
 | <a name="input_env_setup_sg_id"></a> [env\_setup\_sg\_id](#input\_env\_setup\_sg\_id) | Security group ID for the environment setup machine | `string` | n/a | yes |
 | <a name="input_redis_url"></a> [redis\_url](#input\_redis\_url) | Address of the redis (node) that will host the job queue and short term logs. | `string` | n/a | yes |
+| <a name="input_resource_name_prefix"></a> [resource\_name\_prefix](#input\_resource\_name\_prefix) | Prefix for all named AWS resources | `string` | n/a | yes |
 | <a name="input_roi_subnet_id"></a> [roi\_subnet\_id](#input\_roi\_subnet\_id) | Subnet used for the temporary setup machine under the control plane account | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id used for the workers | `string` | n/a | yes |
 | <a name="input_aws_worker_account_id"></a> [aws\_worker\_account\_id](#input\_aws\_worker\_account\_id) | AWS Account ID for workers | `string` | `""` | no |

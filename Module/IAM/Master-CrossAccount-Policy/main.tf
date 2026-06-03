@@ -11,8 +11,8 @@ terraform {
 }
 
 resource "aws_iam_role_policy" "master_assume_worker_role" {
-  name = "dev-valohai-policy-assume-master-${var.worker_account_id}"
-  role = "dev-valohai-iamr-master" # Control plane master role
+  name = "${var.resource_name_prefix}policy-assume-master-${var.worker_account_id}"
+  role = "${var.control_plane_resource_name_prefix}iamr-master" # Control plane master role
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -21,7 +21,7 @@ resource "aws_iam_role_policy" "master_assume_worker_role" {
         Sid      = "AllowAssumeWorkerAccountMasterRole"
         Effect   = "Allow"
         Action   = "sts:AssumeRole"
-        Resource = "arn:aws:iam::${var.worker_account_id}:role/dev-valohai-iamr-master"
+        Resource = "arn:aws:iam::${var.worker_account_id}:role/${var.resource_name_prefix}iamr-master"
       }
     ]
   })

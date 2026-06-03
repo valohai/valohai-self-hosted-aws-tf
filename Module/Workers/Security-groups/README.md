@@ -28,6 +28,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_ec2_key"></a> [ec2\_key](#input\_ec2\_key) | Location of the ssh key pub file for worker instances | `string` | n/a | yes |
+| <a name="input_resource_name_prefix"></a> [resource\_name\_prefix](#input\_resource\_name\_prefix) | Prefix for all named AWS resources | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id used for the workers | `string` | n/a | yes |
 | <a name="input_create_roi_ingress_rule"></a> [create\_roi\_ingress\_rule](#input\_create\_roi\_ingress\_rule) | Whether to create ingress rule on ROI security group (only if workers are in same account) | `bool` | `false` | no |
 | <a name="input_roi_sg_id"></a> [roi\_sg\_id](#input\_roi\_sg\_id) | Valohai Worker security group | `string` | `"50"` | no |

@@ -19,7 +19,7 @@ sed -i "s|URL_BASE=|URL_BASE=${url_base}|" /etc/roi.config
 sed -i "s|AWS_REGION=|AWS_REGION=${region}|" /etc/roi.config
 sed -i "s|AWS_S3_BUCKET_NAME=|AWS_S3_BUCKET_NAME=${s3_bucket}|" /etc/roi.config
 sed -i "s|AWS_S3_KMS_KEY_ARN=|AWS_S3_KMS_KEY_ARN=${s3_kms_key}|" /etc/roi.config
-sed -i "s|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=arn:aws:iam::${aws_account_id}:role/dev-valohai-iamr-multipart|" /etc/roi.config
+sed -i "s|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=|AWS_S3_MULTIPART_UPLOAD_IAM_ROLE=arn:aws:iam::${aws_account_id}:role/${resource_name_prefix}iamr-multipart|" /etc/roi.config
 sed -i "s|DEPLOY_REDIS_URL=|DEPLOY_REDIS_URL=redis://${redis_url}:6379|" /etc/roi.config
 sed -i "s|DATABASE_URL=|DATABASE_URL=psql://roi:${db_password}@${db_url}:5432/valohairoidb?sslmode=require\&sslcertmode=disable|" /etc/roi.config
 sed -i "s|PLATFORM_LONG_NAME=|PLATFORM_LONG_NAME=${environment_name}|" /etc/roi.config
@@ -54,5 +54,5 @@ sudo docker exec roi.service python manage.py roi_create_organization --name=${o
 # Create and save Valohai superadmin token used for the environments setup in SSM
 export VH_TOKEN=`echo $RANDOM | md5sum | head -c 32; echo;`
 sudo docker exec roi.service python manage.py shell -c "from roi.models import User;User.objects.filter(is_superuser=True).first().tokens.create(key='$VH_TOKEN')"
-aws ssm put-parameter --name "dev-valohai-app-token" --value "$VH_TOKEN" --type "SecureString" --tags "Key=Valohai,Value=1"
+aws ssm put-parameter --name "${resource_name_prefix}app-token" --value "$VH_TOKEN" --type "SecureString" --tags "Key=Valohai,Value=1"
 unset VH_TOKEN

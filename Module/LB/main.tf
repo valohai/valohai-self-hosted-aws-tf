@@ -12,7 +12,7 @@ terraform {
 resource "aws_lb" "valohai_lb" {
   #checkov:skip=CKV2_AWS_28:Ensure public facing ALB are protected by WAF
   #checkov:skip=CKV2_AWS_20:Allow using HTTP only on ALB for sample purposes
-  name                       = "dev-valohai-alb-valohai"
+  name                       = "${var.resource_name_prefix}alb-valohai"
   load_balancer_type         = "application"
   internal                   = false
   subnets                    = var.lb_subnet_ids
@@ -75,7 +75,7 @@ resource "aws_lb_listener" "http" {
 
 resource "aws_security_group" "valohai_sg_lb" {
   #checkov:skip=CKV_AWS_260:Allow port 80 for example purposes
-  name        = "dev-valohai-sg-alb"
+  name        = "${var.resource_name_prefix}sg-alb"
   description = "for Valohai ELB"
 
   vpc_id = var.vpc_id

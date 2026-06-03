@@ -33,16 +33,25 @@ provider "aws" {
   }
 }
 
+locals {
+  # The resource_name_prefix used in the control plane account, for the worker deployment's
+  # cross-account references. Falls back to this deployment's resource_name_prefix when both
+  # accounts share a prefix (single-account / same-prefix setups).
+  control_plane_resource_name_prefix = var.control_plane_resource_name_prefix != "" ? var.control_plane_resource_name_prefix : var.resource_name_prefix
+}
+
 module "IAM_Master" {
   source = "./Module/IAM/Master"
 
-  aws_profile                = var.aws_profile
-  aws_region                 = var.aws_region
-  aws_account_id             = var.install_workers && !var.workers_in_control_plane ? var.aws_worker_account_id : var.aws_account_id
-  s3_bucket_name             = var.s3_bucket_name
-  enable_cross_account_trust = var.install_workers && !var.workers_in_control_plane
-  control_plane_account_id   = var.aws_account_id # Control plane account ID
-  worker_role_names          = [for k, m in module.IAM_Workers : m.worker_role_name]
+  aws_profile                        = var.aws_profile
+  aws_region                         = var.aws_region
+  aws_account_id                     = var.install_workers && !var.workers_in_control_plane ? var.aws_worker_account_id : var.aws_account_id
+  resource_name_prefix               = var.resource_name_prefix
+  control_plane_resource_name_prefix = local.control_plane_resource_name_prefix
+  s3_bucket_name                     = var.s3_bucket_name
+  enable_cross_account_trust         = var.install_workers && !var.workers_in_control_plane
+  control_plane_account_id           = var.aws_account_id # Control plane account ID
+  worker_role_names                  = [for k, m in module.IAM_Workers : m.worker_role_name]
 
   depends_on = [module.IAM_Workers]
 }
@@ -58,7 +67,9 @@ module "IAM_Master_CrossAccount_Policy" {
 
   count = var.install_workers && !var.workers_in_control_plane ? 1 : 0
 
-  worker_account_id = var.aws_worker_account_id
+  worker_account_id                  = var.aws_worker_account_id
+  resource_name_prefix               = var.resource_name_prefix
+  control_plane_resource_name_prefix = local.control_plane_resource_name_prefix
 }
 
 module "IAM_Workers" {
@@ -77,8 +88,9 @@ module "IAM_S3" {
 
   count = var.install_control_plane ? 1 : 0
 
-  aws_account_id = var.aws_account_id
-  s3_bucket_name = var.s3_bucket_name
+  aws_account_id       = var.aws_account_id
+  resource_name_prefix = var.resource_name_prefix
+  s3_bucket_name       = var.s3_bucket_name
 
   depends_on = [
     module.IAM_Master
@@ -94,9 +106,10 @@ module "Database" {
 
   count = var.install_control_plane ? 1 : 0
 
-  aws_account_id = var.aws_account_id
-  vpc_id         = var.vpc_id
-  db_subnet_ids  = var.db_subnet_ids
+  aws_account_id       = var.aws_account_id
+  resource_name_prefix = var.resource_name_prefix
+  vpc_id               = var.vpc_id
+  db_subnet_ids        = var.db_subnet_ids
 }
 
 module "Redis" {
@@ -108,8 +121,9 @@ module "Redis" {
 
   count = var.install_control_plane ? 1 : 0
 
-  vpc_id           = var.vpc_id
-  cache_subnet_ids = var.db_subnet_ids
+  vpc_id               = var.vpc_id
+  cache_subnet_ids     = var.db_subnet_ids
+  resource_name_prefix = var.resource_name_prefix
 }
 
 module "S3" {
@@ -121,10 +135,11 @@ module "S3" {
 
   count = var.install_control_plane ? 1 : 0
 
-  domain         = var.domain
-  aws_account_id = var.aws_account_id
-  s3_bucket_name = var.s3_bucket_name
-  s3_logs_name   = var.s3_logs_name
+  domain               = var.domain
+  aws_account_id       = var.aws_account_id
+  resource_name_prefix = var.resource_name_prefix
+  s3_bucket_name       = var.s3_bucket_name
+  s3_logs_name         = var.s3_logs_name
 
   depends_on = [module.IAM_S3]
 }
@@ -138,11 +153,12 @@ module "LB" {
 
   count = var.install_control_plane ? 1 : 0
 
-  aws_account_id  = var.aws_account_id
-  vpc_id          = var.vpc_id
-  lb_subnet_ids   = var.lb_subnet_ids
-  certificate_arn = var.certificate_arn
-  s3_logs_name    = var.s3_logs_name
+  aws_account_id       = var.aws_account_id
+  resource_name_prefix = var.resource_name_prefix
+  vpc_id               = var.vpc_id
+  lb_subnet_ids        = var.lb_subnet_ids
+  certificate_arn      = var.certificate_arn
+  s3_logs_name         = var.s3_logs_name
 }
 
 module "EC2" {
@@ -154,23 +170,24 @@ module "EC2" {
 
   count = var.install_control_plane ? 1 : 0
 
-  aws_account_id     = var.aws_account_id
-  ec2_key            = var.ec2_key
-  region             = var.aws_region
-  vpc_id             = var.vpc_id
-  roi_subnet_id      = var.roi_subnet_id
-  lb_target_group_id = module.LB[0].target_group_id
-  lb_sg              = module.LB[0].security_group_id
-  s3_bucket_name     = var.s3_bucket_name
-  s3_kms_key         = module.S3[0].kms_key
-  environment_name   = var.environment_name
-  organization       = var.organization
-  db_url             = module.Database[0].database_url
-  db_password        = module.Database[0].database_password
-  redis_url          = module.Redis[0].redis_url
-  domain             = var.domain
-  ami_id             = var.ami_id
-  depends_on         = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]
+  aws_account_id       = var.aws_account_id
+  resource_name_prefix = var.resource_name_prefix
+  ec2_key              = var.ec2_key
+  region               = var.aws_region
+  vpc_id               = var.vpc_id
+  roi_subnet_id        = var.roi_subnet_id
+  lb_target_group_id   = module.LB[0].target_group_id
+  lb_sg                = module.LB[0].security_group_id
+  s3_bucket_name       = var.s3_bucket_name
+  s3_kms_key           = module.S3[0].kms_key
+  environment_name     = var.environment_name
+  organization         = var.organization
+  db_url               = module.Database[0].database_url
+  db_password          = module.Database[0].database_password
+  redis_url            = module.Redis[0].redis_url
+  domain               = var.domain
+  ami_id               = var.ami_id
+  depends_on           = [module.Database, module.IAM_Master, module.Redis, module.S3, module.LB]
 }
 
 
@@ -256,6 +273,7 @@ module "Workers_Security-groups" {
   vpc_id                  = var.worker_vpc_id
   roi_sg_id               = var.install_control_plane ? module.EC2[0].roi_security_group_id : ""
   ec2_key                 = var.ec2_key
+  resource_name_prefix    = var.resource_name_prefix
   create_roi_ingress_rule = var.workers_in_control_plane
 }
 
@@ -268,7 +286,8 @@ module "Workers_Valohai-environments-SecurityGroup" {
 
   count = var.install_control_plane ? 1 : 0
 
-  vpc_id = var.vpc_id
+  vpc_id               = var.vpc_id
+  resource_name_prefix = var.resource_name_prefix
 }
 
 module "Workers_Valohai-environments" {
@@ -280,21 +299,23 @@ module "Workers_Valohai-environments" {
 
   for_each = var.install_workers ? var.environments : {}
 
-  aws_region              = var.aws_region
-  aws_account_id          = var.aws_account_id
-  aws_worker_account_id   = var.aws_worker_account_id
-  vpc_id                  = var.worker_vpc_id
-  roi_subnet_id           = var.roi_subnet_id
-  env_setup_sg_id         = var.workers_in_control_plane ? module.Workers_Valohai-environments-SecurityGroup[0].security_group_id : ""
-  redis_url               = each.value.redis_url != "" ? each.value.redis_url : length(module.Redis) > 0 ? module.Redis[0].redis_url : var.redis_url
-  domain                  = var.domain
-  ami_id                  = var.ami_id
-  env_owner_id            = each.value.env_owner_id
-  env_name_prefix         = each.value.env_name_prefix
-  env_asg_prefix          = each.value.env_asg_prefix
-  env_queue_prefix        = each.value.env_queue_prefix
-  aws_instance_types      = each.value.aws_instance_types
-  aws_spot_instance_types = each.value.aws_spot_instance_types
-  add_spot_instances      = each.value.add_spot_instances
-  depends_on              = [module.Redis, module.EC2, module.Workers_Valohai-environments-SecurityGroup]
+  aws_region                         = var.aws_region
+  aws_account_id                     = var.aws_account_id
+  resource_name_prefix               = var.resource_name_prefix
+  control_plane_resource_name_prefix = local.control_plane_resource_name_prefix
+  aws_worker_account_id              = var.aws_worker_account_id
+  vpc_id                             = var.worker_vpc_id
+  roi_subnet_id                      = var.roi_subnet_id
+  env_setup_sg_id                    = var.workers_in_control_plane ? module.Workers_Valohai-environments-SecurityGroup[0].security_group_id : ""
+  redis_url                          = each.value.redis_url != "" ? each.value.redis_url : length(module.Redis) > 0 ? module.Redis[0].redis_url : var.redis_url
+  domain                             = var.domain
+  ami_id                             = var.ami_id
+  env_owner_id                       = each.value.env_owner_id
+  env_name_prefix                    = each.value.env_name_prefix
+  env_asg_prefix                     = each.value.env_asg_prefix
+  env_queue_prefix                   = each.value.env_queue_prefix
+  aws_instance_types                 = each.value.aws_instance_types
+  aws_spot_instance_types            = each.value.aws_spot_instance_types
+  add_spot_instances                 = each.value.add_spot_instances
+  depends_on                         = [module.Redis, module.EC2, module.Workers_Valohai-environments-SecurityGroup]
 }

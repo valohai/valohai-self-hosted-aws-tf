@@ -17,3 +17,8 @@ variable "s3_logs_name" {
   description = "Unique name for the S3 bucket that's used as the default log storage"
   type        = string
 }
+
+variable "resource_name_prefix" {
+  description = "Prefix for all named AWS resources"
+  type        = string
+}

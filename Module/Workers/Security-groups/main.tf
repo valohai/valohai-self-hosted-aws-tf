@@ -1,17 +1,17 @@
 # Load public key for worker instances
 resource "aws_key_pair" "valohai_worker_key" {
-  key_name   = "dev-valohai-key-workers"
+  key_name   = "${var.resource_name_prefix}key-workers"
   public_key = file(var.ec2_key)
 
   tags = {
-    Name = "dev-valohai-key-workers",
+    Name = "${var.resource_name_prefix}key-workers",
   }
 }
 
 # Create worker security group
 resource "aws_security_group" "valohai_sg_workers" {
   #checkov:skip=CKV2_AWS_5:Ensure security groups are attached to another resource
-  name        = "dev-valohai-sg-workers"
+  name        = "${var.resource_name_prefix}sg-workers"
   description = "for Valohai workers"
 
   vpc_id = var.vpc_id
@@ -25,7 +25,7 @@ resource "aws_security_group" "valohai_sg_workers" {
   }
 
   tags = {
-    Name = "dev-valohai-sg-workers",
+    Name = "${var.resource_name_prefix}sg-workers",
   }
 }
 
