@@ -51,8 +51,7 @@ sudo snap start amazon-ssm-agent
 set +xeuo pipefail
 sudo docker exec roi.service python manage.py roi_create_organization --name=${organization} --for-superuser --skip-checks
 
-# Create and save Valohai superadmin token used for the environments setup in SSM
-export VH_TOKEN=`echo $RANDOM | md5sum | head -c 32; echo;`
-sudo docker exec roi.service python manage.py shell -c "from roi.models import User;User.objects.filter(is_superuser=True).first().tokens.create(key='$VH_TOKEN')"
-aws ssm put-parameter --name "${resource_name_prefix}app-token" --value "$VH_TOKEN" --type "SecureString" --tags "Key=Valohai,Value=1"
+# Register the Terraform-managed Valohai superadmin token (read from SSM) used for the environments setup
+export VH_TOKEN=`aws ssm get-parameter --name ${app_token} --with-decryption | sed -n 's|.*"Value": *"\([^"]*\)".*|\1|p'`
+sudo docker exec roi.service python manage.py shell -c "from roi.models import User;User.objects.filter(is_superuser=True).first().tokens.get_or_create(key='$VH_TOKEN')"
 unset VH_TOKEN

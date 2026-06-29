@@ -75,6 +75,19 @@ resource "aws_ssm_parameter" "jwt_key" {
   key_id      = aws_kms_key.valohai_kms_key.id
 }
 
+resource "random_password" "app_token" {
+  length  = 32
+  special = false
+}
+
+resource "aws_ssm_parameter" "app_token" {
+  name        = "${var.resource_name_prefix}app-token"
+  type        = "SecureString"
+  description = "Valohai superadmin token used for the environments setup"
+  value       = random_password.app_token.result
+  key_id      = aws_kms_key.valohai_kms_key.id
+}
+
 # Load public key
 resource "aws_key_pair" "valohai_roi_key" {
   key_name   = "${var.resource_name_prefix}key-valohai"
@@ -112,6 +125,7 @@ resource "aws_instance" "valohai_roi" {
     vpc_id               = var.vpc_id
     organization         = var.organization
     resource_name_prefix = var.resource_name_prefix
+    app_token            = aws_ssm_parameter.app_token.name
   })
   user_data_replace_on_change = true
 
