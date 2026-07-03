@@ -29,6 +29,11 @@ variable "roi_subnet_id" {
   type        = string
 }
 
+variable "worker_subnet_ids" {
+  description = "A list of subnets where Valohai workers can be placed"
+  type        = list(string)
+}
+
 variable "redis_url" {
   description = "Address of the redis (node) that will host the job queue and short term logs."
   type        = string

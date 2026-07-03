@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Failsafe to shut down the machine in case the script fails, leaves some time for debugging
+shutdown -h +120
+
 set -xeuo pipefail
 sudo apt-get -o DPkg::Lock::Timeout=-1 update || true
 sudo apt-get -o DPkg::Lock::Timeout=-1 install jq -y
@@ -22,6 +25,8 @@ sed -i "s|vpc-id: ''|vpc-id: '${worker_vpc_id}'|" /home/ubuntu/prep_template.yam
 sed -i "s|key-pair-name: ''|key-pair-name: '${resource_name_prefix}key-workers'|" /home/ubuntu/prep_template.yaml
 echo "  ${aws_instance_types}" >> /home/ubuntu/prep_template.yaml
 echo "  ${aws_spot_instance_types}" >> /home/ubuntu/prep_template.yaml
+echo "  vpc-subnets:" >> /home/ubuntu/prep_template.yaml
+echo "  ${worker_subnet_ids}" >> /home/ubuntu/prep_template.yaml
 
 sed -i "s|valohai-env-owner-id: ''|valohai-env-owner-id: '${organization}'|" /home/ubuntu/prep_template.yaml
 
@@ -52,5 +57,5 @@ fi
 # Run the prep script
 su ubuntu -c "python3 -m prep --config-yaml /home/ubuntu/prep_template.yaml aws"
 
-# Shutdown
+# Shutdown, overrides the failsafe from the beginning of the script
 shutdown -h now

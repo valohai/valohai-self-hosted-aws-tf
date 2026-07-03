@@ -8,14 +8,15 @@ terraform {
 
 # Temporary machine for setting up environment in Valohai
 resource "aws_instance" "valohai_environments_setup" {
-  ami                    = var.ami_id
-  instance_type          = "t3.medium"
-  key_name               = "${var.control_plane_resource_name_prefix}key-valohai"
-  vpc_security_group_ids = [var.env_setup_sg_id]
-  subnet_id              = var.roi_subnet_id
-  iam_instance_profile   = "${var.control_plane_resource_name_prefix}iami-master"
-  monitoring             = true
-  ebs_optimized          = true
+  ami                                  = var.ami_id
+  instance_type                        = "t3.medium"
+  key_name                             = "${var.control_plane_resource_name_prefix}key-valohai"
+  vpc_security_group_ids               = [var.env_setup_sg_id]
+  subnet_id                            = var.roi_subnet_id
+  iam_instance_profile                 = "${var.control_plane_resource_name_prefix}iami-master"
+  monitoring                           = true
+  ebs_optimized                        = true
+  instance_initiated_shutdown_behavior = "terminate"
   user_data = templatefile("${path.module}/config/user_data.sh", {
     url_base                           = var.domain
     region                             = var.aws_region
@@ -30,6 +31,7 @@ resource "aws_instance" "valohai_environments_setup" {
     env_name_prefix                    = var.env_name_prefix
     env_asg_prefix                     = var.env_asg_prefix
     env_queue_prefix                   = var.env_queue_prefix
+    worker_subnet_ids                  = indent(2, yamlencode(var.worker_subnet_ids))
     aws_instance_types                 = indent(2, yamlencode(var.aws_instance_types))
     aws_spot_instance_types            = var.add_spot_instances ? indent(2, yamlencode(formatlist("%s.spot", var.aws_spot_instance_types))) : ""
   })
