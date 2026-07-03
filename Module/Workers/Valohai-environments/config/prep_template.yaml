@@ -17,7 +17,5 @@ aws:
   roi-redis-url: '' # starts with redis://
   security-group-name: '' # add your security group name
   vpc-id: '' # add with your vpc-id
-  vpc-subnets:
-    - 'valohai-subnet-*' # replace with how your subnets are named
   key-pair-name: '' # add your EC2 key pair name (same as for the Valohai master instance)
   instance-types:

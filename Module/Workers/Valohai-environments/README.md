@@ -38,6 +38,7 @@ No modules.
 | <a name="input_resource_name_prefix"></a> [resource\_name\_prefix](#input\_resource\_name\_prefix) | Prefix for all named AWS resources | `string` | n/a | yes |
 | <a name="input_roi_subnet_id"></a> [roi\_subnet\_id](#input\_roi\_subnet\_id) | Subnet used for the temporary setup machine under the control plane account | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id used for the workers | `string` | n/a | yes |
+| <a name="input_worker_subnet_ids"></a> [worker\_subnet\_ids](#input\_worker\_subnet\_ids) | A list of subnets where Valohai workers can be placed | `list(string)` | n/a | yes |
 | <a name="input_aws_worker_account_id"></a> [aws\_worker\_account\_id](#input\_aws\_worker\_account\_id) | AWS Account ID for workers | `string` | `""` | no |
 | <a name="input_env_asg_prefix"></a> [env\_asg\_prefix](#input\_env\_asg\_prefix) | Prefix for ASG names in Valohai environments | `string` | `"dev-valohai-worker-"` | no |
 | <a name="input_env_name_prefix"></a> [env\_name\_prefix](#input\_env\_name\_prefix) | Prefix for Valohai environment names | `string` | `""` | no |

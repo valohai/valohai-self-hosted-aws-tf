@@ -306,6 +306,7 @@ module "Workers_Valohai-environments" {
   aws_worker_account_id              = var.aws_worker_account_id
   vpc_id                             = var.worker_vpc_id
   roi_subnet_id                      = var.roi_subnet_id
+  worker_subnet_ids                  = var.worker_subnet_ids
   env_setup_sg_id                    = var.workers_in_control_plane ? module.Workers_Valohai-environments-SecurityGroup[0].security_group_id : ""
   redis_url                          = each.value.redis_url != "" ? each.value.redis_url : length(module.Redis) > 0 ? module.Redis[0].redis_url : var.redis_url
   domain                             = var.domain
